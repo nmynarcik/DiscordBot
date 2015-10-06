@@ -647,7 +647,6 @@ function rssfeed(bot,msg,url,count,full){
     });
 }
 
-
 var bot = new Discord.Client();
 
 bot.on("ready", function () {
