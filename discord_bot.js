@@ -757,6 +757,94 @@ bot.on("presence", function(user,status,gameId) {
 		bot.sendMessage(msg.channel, "@everyone Anyone up for " + game + "?");
 		console.log("sent game invites for " + game);
 	}
+	else if (msg.content.indexOf("dawnbot") > -1) {
+		bot.sendMessage(msg.channel, "Hello!");
+	}
+	else if (msg.isMentioned(bot.user)) {
+		var tokens = msg.content.split(" ");
+		tokens.shift();
+		if (tokens[0] === "servers") {
+			bot.sendMessage(msg.channel,bot.servers);
+		} else if (tokens[0] === "channels") {
+			bot.sendMessage(msg.channel,bot.channels);
+		} else if (tokens[0] === "myid") {
+			bot.sendMessage(msg.channel,msg.author.id);
+		} else if (tokens[0] === "idle") {
+			bot.setStatusIdle();
+		} else if (tokens[0] === "online") {
+			bot.setStatusOnline();
+		} else if (tokens[0] === "record") {
+			tokens.shift();
+			var user = bot.getUser("username",tokens.shift());
+			bot.sendMessage(msg.channel,user + "\n" + tokens.join(" "));
+		} else {
+			bot.sendMessage(msg.channel,msg.author + ", you called?");
+		}
+	}
+	else if(msg.content.substring(0,8) === "!youtube") {
+		var tags = msg.content.split(" ");
+		tags.shift();
+		tags = tags.join(" ");
+		youtube_plugin.respond(tags,msg.channel,bot)
+		//bot.sendMessage(msg.channel,youtube_plugin.respond(tags));
+	}
+
+	else if(msg.content.substring(0,4) === "!say") {
+		var tags = msg.content.split(" ");
+		tags.shift();
+		tags = tags.join(" ");
+		bot.sendMessage(msg.channel,tags);
+		//bot.sendMessage(msg.channel,youtube_plugin.respond(tags));
+	}
+
+	else if(msg.content.substring(0,6) === "!image") {
+		var tags = msg.content.split(" ");
+		tags.shift();
+		tags = tags.join(" ");
+		google_image_plugin.respond(tags,msg.channel,bot)
+		//bot.sendMessage(msg.channel,youtube_plugin.respond(tags));
+	}
+	else if(msg.content.substring(0,16) === "!pullanddeploy") {
+		bot.sendMessage(msg.channel,"brb!",function(error,sentMsg){
+			console.log("updating...");
+	                var spawn = require('child_process').spawn;
+			spawn('sh', [ 'pullanddeploy.sh' ], {detached: true});
+			console.log("restart");
+			process.exit()
+		});
+	}
+	else if(msg.content.substring(0,5) === "!meme"){
+		var tags = msg.content.split('"');
+		var memetype = tags[0].split(" ")[1];
+		//bot.sendMessage(msg.channel,tags);
+		var Imgflipper = require("imgflipper");
+		var imgflipper = new Imgflipper(AuthDetails.imgflip_username, AuthDetails.imgflip_password);
+		imgflipper.generateMeme(meme[memetype], tags[1]?tags[1]:"", tags[3]?tags[3]:"", function(err, image){
+			//console.log(arguments);
+			bot.sendMessage(msg.channel,image);
+		});
+
+	}
+	else if(msg.content.substring(0,8) === "!version") {
+		var commit = require('child_process').spawn('git', ['log','-n','1']);
+		commit.stdout.on('data', function(data) {
+			bot.sendMessage(msg.channel,data);
+		});
+		commit.on('close',function(code) {
+			if( code != 0){
+				bot.sendMessage(msg.channel,"failed checking git version!");
+			}
+		});
+	}
+});
+ 
+
+//This is supposed to message on user sign on, but doessn't work
+bot.on("presence", function(data) {
+	//if(status === "online"){
+	console.log("presence update");
+	bot.sendMessage(data.server,data.user+" went "+data.status);
+	//}
 });
 
 function get_gif(tags, func) {
