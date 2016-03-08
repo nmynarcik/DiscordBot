@@ -14,12 +14,12 @@ try {
 	console.log("couldn't load youtube plugin!\n"+e.stack);
 }
 
-try {
-	var wa = require("./wolfram_plugin");
-	var wolfram_plugin = new wa();
-} catch(e){
-	console.log("couldn't load wolfram plugin!\n"+e.stack);
-}
+// try {
+// 	var wa = require("./wolfram_plugin");
+// 	var wolfram_plugin = new wa();
+// } catch(e){
+// 	console.log("couldn't load wolfram plugin!\n"+e.stack);
+// }
 
 // Get authentication data
 try {
@@ -353,7 +353,7 @@ var commands = {
                     //bot.sendMessage(msg.channel,JSON.stringify(snapshot));
                     bot.sendMessage(msg.channel,snapshot.name
                         + "\nprice: $" + snapshot.lastTradePriceOnly);
-                }  
+                }
             });
         }
     },
@@ -458,7 +458,7 @@ var commands = {
         process: function(bot,msg,suffix) {
             if (suffix.split("d").length <= 1) {
                 bot.sendMessage(msg.channel,msg.author + " rolled a " + d20.roll(suffix || "10"));
-            }  
+            }
             else if (suffix.split("d").length > 1) {
                 var eachDie = suffix.split("+");
                 var passing = 0;
@@ -660,7 +660,7 @@ bot.on("disconnected", function () {
 
 	console.log("Disconnected!");
 	process.exit(1); //exit node.js with an error
-	
+
 });
 
 bot.on("message", function (msg) {
@@ -721,13 +721,13 @@ bot.on("message", function (msg) {
         if(msg.author == bot.user){
             return;
         }
-        
+
         if (msg.author != bot.user && msg.isMentioned(bot.user)) {
                 bot.sendMessage(msg.channel,msg.author + ", you called?");
         }
     }
 });
- 
+
 
 //Log user status changes
 bot.on("presence", function(user,status,gameId) {
