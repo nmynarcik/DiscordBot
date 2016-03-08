@@ -8,7 +8,7 @@ try {
 }
 
 try {
-	var yt = require("youtube_plugin");
+	var yt = require("./youtube_plugin");
 	var youtube_plugin = new yt();
 } catch(e){
 	console.log("couldn't load youtube plugin!\n"+e.stack);
@@ -23,7 +23,7 @@ try {
 
 // Get authentication data
 try {
-	var AuthDetails = require("auth.json");
+	var AuthDetails = require("./auth.json");
 } catch (e){
 	console.log("Please create an auth.json like auth.json.example with at least an email and password.\n"+e.stack);
 	process.exit();
@@ -32,7 +32,7 @@ try {
 // Load custom permissions
 var Permissions = {};
 try{
-	Permissions = require("permissions.json");
+	Permissions = require("./permissions.json");
 } catch(e){}
 Permissions.checkPermission = function (user,permission){
 	try {
@@ -55,7 +55,7 @@ Permissions.checkPermission = function (user,permission){
 //load config data
 var Config = {};
 try{
-	Config = require("config.json");
+	Config = require("./config.json");
 } catch(e){ //no config file, use defaults
 	Config.debug = false;
 	Config.respondToInvalid = false;

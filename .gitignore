@@ -27,8 +27,8 @@ build/Release
 node_modules
 
 #config files
-auth.json
-rss.json
-alias.json
-permissions.json
-messagebox.json
+#auth.json
+#rss.json
+#alias.json
+#permissions.json
+#messagebox.json
