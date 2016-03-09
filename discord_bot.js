@@ -34,12 +34,12 @@ try {
 	console.log("couldn't load youtube plugin!\n"+e.stack);
 }
 
-// try {
-// 	var wa = require("./wolfram_plugin");
-// 	var wolfram_plugin = new wa();
-// } catch(e){
-// 	console.log("couldn't load wolfram plugin!\n"+e.stack);
-// }
+try {
+	var wa = require("./wolfram_plugin");
+	var wolfram_plugin = new wa();
+} catch(e){
+	console.log("couldn't load wolfram plugin!\n"+e.stack);
+}
 
 // Get authentication data
 try {
