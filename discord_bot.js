@@ -11,6 +11,12 @@ app.get('/', function(request, response) {
     console.log('App is running, server is listening on port ', app.get('port'));
 });
 
+//Lets Keep the App alive; prevent sleeping
+var http = require("http");
+setInterval(function() {
+    http.get("http://lowbot-discord.herokuapp.com/");
+}, 1200000); // every 20 minutes (300000)
+
 
 try {
 	var Discord = require("discord.js");
