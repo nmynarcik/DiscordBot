@@ -1,3 +1,4 @@
+require('newrelic');
 var express = require('express');
 var app     = express();
 
@@ -15,7 +16,7 @@ app.get('/', function(request, response) {
 var http = require("http");
 setInterval(function() {
     http.get("http://lowbot-discord.herokuapp.com/");
-}, 1200000); // every 20 minutes (300000)
+}, 1200000); // every 20 minutes
 
 
 try {
