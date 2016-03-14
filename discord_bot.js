@@ -530,7 +530,8 @@ var commands = {
 						+" is online, playing "
 						+stream.stream.game
 						+"\n"+stream.stream.channel.status
-						+"\n"+stream.stream.preview.large)
+						+"\n"+stream.stream.preview.large);
+          bot.sendMessage(msg.channel, stream.stream.channel.url);
 				}else{
 					bot.sendMessage(msg.channel, suffix+" is offline")
 				}
