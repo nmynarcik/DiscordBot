@@ -526,13 +526,15 @@ var commands = {
 			function(err,res,body){
 				var stream = JSON.parse(body);
 				if(stream.stream){
-					bot.sendMessage(msg.channel, suffix
-						+" is online, playing "
-						+stream.stream.game
-            +" with "+stream.stream.viewers
-            +" viewers"
-						+"\n"+stream.stream.channel.status
-						+"\n"+stream.stream.preview.large);
+          var streamInfo = suffix
+                            +" is online, playing "
+                            +stream.stream.game
+                            +" with `"+stream.stream.viewers
+                            +"` viewers"
+                            +"\n"+stream.stream.channel.status
+                            +"\n"+stream.stream.preview.large;
+          console.log(streamInfo);
+					bot.sendMessage(msg.channel, streamInfo);
           bot.sendMessage(msg.channel, stream.stream.channel.url);
 				}else{
 					bot.sendMessage(msg.channel, suffix+" is offline")
