@@ -529,7 +529,8 @@ var commands = {
 					bot.sendMessage(msg.channel, suffix
 						+" is online, playing "
 						+stream.stream.game
-            +"with "+stream.stream.viewers+" viewers"
+            +" with "+stream.stream.viewers
+            +" viewers"
 						+"\n"+stream.stream.channel.status
 						+"\n"+stream.stream.preview.large);
           bot.sendMessage(msg.channel, stream.stream.channel.url);
