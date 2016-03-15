@@ -532,10 +532,11 @@ var commands = {
                             +" with `"+stream.stream.viewers
                             +"` viewers"
                             +"\n"+stream.stream.channel.status
-                            +"\n"+stream.stream.preview.large;
-          console.log(streamInfo);
+                            +"\n"+stream.stream.preview.large
+                            +"\n"+stream.stream.channel.url;
+          // console.log(streamInfo);
 					bot.sendMessage(msg.channel, streamInfo);
-          bot.sendMessage(msg.channel, stream.stream.channel.url);
+          // bot.sendMessage(msg.channel, stream.stream.channel.url);
 				}else{
 					bot.sendMessage(msg.channel, suffix+" is offline")
 				}
