@@ -522,27 +522,41 @@ var commands = {
 		usage: "<stream>",
 		description: "checks if the given stream is online",
 		process: function(bot,msg,suffix){
-			require("request")("https://api.twitch.tv/kraken/streams/"+suffix,
-			function(err,res,body){
-				var stream = JSON.parse(body);
-				if(stream.stream){
-          var streamInfo = suffix
-                            +" is online, playing "
-                            +stream.stream.game
-                            +" with `"+stream.stream.viewers
-                            +"` viewers"
-                            +"\n"+stream.stream.channel.status
-                            +"\n"+stream.stream.preview.large
-                            +"\n"+stream.stream.channel.url;
-          // console.log(streamInfo);
-					bot.sendMessage(msg.channel, streamInfo);
-          // bot.sendMessage(msg.channel, stream.stream.channel.url);
-				}else{
-					bot.sendMessage(msg.channel, suffix+" is offline")
-				}
-			});
+      var request = msg.content.split(' ');
+      console.log('request',request);
+      if(request.length > 3){
+        commandNotRecognized(msg);
+        return;
+      }else if(request.length == 2){
+        // probably need to extract this to its own function
+        require("request")("https://api.twitch.tv/kraken/streams/"+suffix,
+    			function(err,res,body){
+    				var stream = JSON.parse(body);
+    				if(stream.stream){
+              var streamInfo = suffix
+                                +" is online, playing "
+                                +stream.stream.game
+                                +" with `"+stream.stream.viewers
+                                +"` viewers"
+                                +"\n"+stream.stream.channel.status
+                                +"\n"+stream.stream.preview.large
+                                +"\n"+stream.stream.channel.url;
+              // console.log(streamInfo);
+    					bot.sendMessage(msg.channel, streamInfo);
+              // bot.sendMessage(msg.channel, stream.stream.channel.url);
+    				}else{
+    					bot.sendMessage(msg.channel, suffix+" is offline");
+    				}
+    			});
+      }else{
+        if(request[1] === 'add'){
+          bot.sendMessage(msg.channel,'Coming Soon: Ability to add '+request[2]+' stream to the watch list');
+        }else{
+          commandNotRecognized(msg);
+        }
 		}
-	},
+	 }
+  },
 	"xkcd": {
 		usage: "[comic number]",
 		description: "displays a given xkcd comic number (or the latest if nothing specified",
@@ -672,6 +686,10 @@ function rssfeed(bot,msg,url,count,full){
         });
         stream.alreadyRead = true;
     });
+}
+
+function commandNotRecognized(msg){
+  bot.sendMessage(msg.channel, "Sorry, I do not understand `"+msg.content+"`. Use `!help` if you are having trouble.");
 }
 
 var bot = new Discord.Client();
