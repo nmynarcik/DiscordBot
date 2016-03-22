@@ -389,6 +389,7 @@ var commands = {
                 } else {
                     //bot.sendMessage(msg.channel,JSON.stringify(snapshot));
                     bot.sendMessage(msg.channel,snapshot.name + "\nprice: $" + snapshot.lastTradePriceOnly);
+
                 }
             });
         }
@@ -428,7 +429,6 @@ var commands = {
             rssfeed(bot,msg,"https://www.reddit.com"+path,1,false);
         }
     },
-  "alias": {
     usage: "<name> <actual command>",
     description: "Creates command aliases. Useful for making simple commands on the fly",
     process: function(bot,msg,suffix) {
