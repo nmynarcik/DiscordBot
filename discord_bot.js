@@ -50,10 +50,22 @@ try {
 
 // Get authentication data
 try {
+  // Should only work locally now
   var AuthDetails = require('./auth.json');
 } catch (e) {
-  console.log('Please create an auth.json like auth.json.example with at least an email and password.\n' + e.stack);
-  process.exit();
+  //console.log('Please create an auth.json like auth.json.example with at least an email and password.\n' + e.stack);
+  // process.exit();
+  console.log('Loading Config Variables from Environment');
+  var AuthDetails = {
+  	"email" : process.env.EMAIL,
+  	"password" : process.env.PASSWORD,
+  	"youtube_api_key": process.env.YOUTUBE_API_KEY,
+  	"google_custom_search": process.env.GOOGLE_CUSTOM_SEARCH,
+  	"imgflip_username": process.env.IMGFLIP_USERNAME,
+  	"imgflip_password": process.env.IMGFLIP_PASSWORD,
+  	"wolfram_api_key": process.env.WOLFRAM_API_KEY,
+  	"google_translate": process.env.GOOGLE_TRANSLATE
+  }
 }
 
 // Load custom permissions
