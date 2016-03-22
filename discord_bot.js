@@ -6,92 +6,102 @@ app.set('port', (process.env.PORT || 5000));
 
 //For avoidong Heroku $PORT error
 app.get('/', function(request, response) {
-    var result = 'App is running'
-    response.send(result);
+  var result = 'App is running';
+  response.send(result);
 }).listen(app.get('port'), function() {
-    console.log('App is running, server is listening on port ', app.get('port'));
+  console.log('App is running, server is listening on port ', app.get('port'));
 });
 
 //Lets Keep the App alive; prevent sleeping
-var http = require("http");
+var http = require('http');
 setInterval(function() {
-    http.get("http://lowbot-discord.herokuapp.com/");
-}, 1200000); // every 20 minutes
-
+  http.get('http://lowbot-discord.herokuapp.com/');
+}, 1200000); //every 20 minutes
 
 try {
-	var Discord = require("discord.js");
+  var Discord = require('discord.js');
 } catch (e){
-	console.log(e.stack);
-	console.log(process.version);
-	console.log("Please run npm install and ensure it passes with no errors!");
-	process.exit();
+  console.log(e.stack);
+  console.log(process.version);
+  console.log('Please run npm install and ensure it passes with no errors!');
+  process.exit();
 }
 
 try {
-	var yt = require("./youtube_plugin");
-	var youtube_plugin = new yt();
-} catch(e){
-	console.log("couldn't load youtube plugin!\n"+e.stack);
+  var yt = require('./youtube_plugin');
+  var youtube_plugin = new yt();
+} catch (e) {
+  console.log('couldn\'t load youtube plugin!\n' + e.stack);
 }
 
 try {
-	var wa = require("./wolfram_plugin");
-	var wolfram_plugin = new wa();
-} catch(e){
-	console.log("couldn't load wolfram plugin!\n"+e.stack);
+  var wa = require('./wolfram_plugin');
+  var wolfram_plugin = new wa();
+} catch (e) {
+  console.log('couldn\'t load wolfram plugin!\n' + e.stack);
 }
 
 try {
-	var gt = require("./google_translate_plugin");
-	var google_translate = new gt();
-} catch(e){
-	console.log("couldn't load google translate plugin!\n"+e.stack);
+  var gt = require('./google_translate_plugin');
+  var google_translate = new gt();
+} catch (e) {
+  console.log('couldn\'t load google translate plugin!\n' + e.stack);
 }
 
 // Get authentication data
 try {
-	var AuthDetails = require("./auth.json");
-} catch (e){
-	console.log("Please create an auth.json like auth.json.example with at least an email and password.\n"+e.stack);
-	process.exit();
+  var AuthDetails = require('./auth.json');
+} catch (e) {
+  console.log('Please create an auth.json like auth.json.example with at least an email and password.\n' + e.stack);
+  process.exit();
 }
 
 // Load custom permissions
 var Permissions = {};
-try{
-	Permissions = require("./permissions.json");
-} catch(e){}
-Permissions.checkPermission = function (user,permission){
-	try {
-		var allowed = false;
-		try{
-			if(Permissions.global.hasOwnProperty(permission)){
-				allowed = Permissions.global[permission] == true;
-			}
-		} catch(e){}
-		try{
-			if(Permissions.users[user.id].hasOwnProperty(permission)){
-				allowed = Permissions.users[user.id][permission] == true;
-			}
-		} catch(e){}
-		return allowed;
-	} catch(e){}
-	return false;
+try {
+  Permissions = require('./permissions.json');
+} catch (e) {
+  // die
 }
+
+Permissions.checkPermission = function(user, permission) {
+  try {
+    var allowed = false;
+    try {
+      if (Permissions.global.hasOwnProperty(permission)) {
+        allowed = Permissions.global[permission] === true;
+      }
+    } catch (e) {
+      // die
+    }
+
+    try {
+      if (Permissions.users[user.id].hasOwnProperty(permission)) {
+        allowed = Permissions.users[user.id][permission] === true;
+      }
+    } catch (e) {
+      // die
+    }
+
+    return allowed;
+  } catch (e) {
+    // die
+  }
+  return false;
+};
 
 //load config data
 var Config = {};
-try{
-	Config = require("./config.json");
-} catch(e){ //no config file, use defaults
-	Config.debug = false;
-	Config.respondToInvalid = false;
+try {
+  Config = require('./config.json');
+} catch (e) { //no config file, use defaults
+  Config.debug = false;
+  Config.respondToInvalid = false;
 }
 
-var qs = require("querystring");
+var qs = require('querystring');
 
-var d20 = require("d20");
+var d20 = require('d20');
 
 var htmlToText = require('html-to-text');
 
@@ -107,40 +117,39 @@ var giphy_config = {
 
 //https://api.imgflip.com/popular_meme_ids
 var meme = {
-	"brace": 61546,
-	"mostinteresting": 61532,
-	"fry": 61520,
-	"onedoesnot": 61579,
-	"yuno": 61527,
-	"success": 61544,
-	"allthethings": 61533,
-	"doge": 8072285,
-	"drevil": 40945639,
-	"skeptical": 101711,
-	"notime": 442575,
-	"yodawg": 101716
+  'brace': 61546,
+  'mostinteresting': 61532,
+  'fry': 61520,
+  'onedoesnot': 61579,
+  'yuno': 61527,
+  'success': 61544,
+  'allthethings': 61533,
+  'doge': 8072285,
+  'drevil': 40945639,
+  'skeptical': 101711,
+  'notime': 442575,
+  'yodawg': 101716
 };
 
 var aliases;
 var messagebox;
 
 var commands = {
-	"gif": {
-		usage: "<image tags>",
+  "gif": {
+    usage: "<image tags>",
         description: "returns a random gif matching the tags passed",
-		process: function(bot, msg, suffix) {
-		    var tags = suffix.split(" ");
-		    get_gif(tags, function(id) {
-			if (typeof id !== "undefined") {
-			    bot.sendMessage(msg.channel, "http://media.giphy.com/media/" + id + "/giphy.gif [Tags: " + (tags ? tags : "Random GIF") + "]");
-			}
-			else {
-			    bot.sendMessage(msg.channel, "Invalid tags, try something different. [Tags: " + (tags ? tags : "Random GIF") + "]");
-			}
-		    });
-		}
-	},
-    "ping": {
+    process: function(bot, msg, suffix) {
+        var tags = suffix.split(' ');
+        get_gif(tags, function(id) {
+          if (typeof id !== 'undefined') {
+              bot.sendMessage(msg.channel, "http://media.giphy.com/media/" + id + "/giphy.gif [Tags: " + (tags ? tags : "Random GIF") + "]");
+          }else{
+              bot.sendMessage(msg.channel, "Invalid tags, try something different. [Tags: " + (tags ? tags : "Random GIF" + "]"));
+          }
+        });
+    }
+  },
+  "ping": {
         description: "responds pong, useful for checking if bot is alive",
         process: function(bot, msg, suffix) {
             bot.sendMessage(msg.channel, msg.sender+" pong!");
@@ -181,7 +190,7 @@ var commands = {
         description: "bot says message",
         process: function(bot,msg,suffix){ bot.sendMessage(msg.channel,suffix);}
     },
-	"announce": {
+  "announce": {
         usage: "<message>",
         description: "bot says message with text to speech",
         process: function(bot,msg,suffix){ bot.sendMessage(msg.channel,suffix,{tts:true});}
@@ -190,8 +199,8 @@ var commands = {
         description: "bot will perform a git pull master and restart with the new code",
         process: function(bot,msg,suffix) {
             bot.sendMessage(msg.channel,"fetching updates...",function(error,sentMsg){
-                console.log("updating...");
-	            var spawn = require('child_process').spawn;
+                console.log('updating...');
+              var spawn = require('child_process').spawn;
                 var log = function(err,stdout,stderr){
                     if(stdout){console.log(stdout);}
                     if(stderr){console.log(stderr);}
@@ -200,18 +209,18 @@ var commands = {
                 fetch.stdout.on('data',function(data){
                     console.log(data.toString());
                 });
-                fetch.on("close",function(code){
+                fetch.on('close',function(code){
                     var reset = spawn('git', ['reset','--hard','origin/master']);
                     reset.stdout.on('data',function(data){
                         console.log(data.toString());
                     });
-                    reset.on("close",function(code){
+                    reset.on('close',function(code){
                         var npm = spawn('npm', ['install']);
                         npm.stdout.on('data',function(data){
                             console.log(data.toString());
                         });
-                        npm.on("close",function(code){
-                            console.log("goodbye");
+                        npm.on('close',function(code){
+                            console.log('goodbye');
                             bot.sendMessage(msg.channel,"brb!",function(){
                                 bot.logout(function(){
                                     process.exit();
@@ -227,9 +236,9 @@ var commands = {
         usage: 'meme "top text" "bottom text"',
         process: function(bot,msg,suffix) {
             var tags = msg.content.split('"');
-            var memetype = tags[0].split(" ")[1];
+            var memetype = tags[0].split(' ')[1];
             //bot.sendMessage(msg.channel,tags);
-            var Imgflipper = require("imgflipper");
+            var Imgflipper = require('imgflipper');
             var imgflipper = new Imgflipper(AuthDetails.imgflip_username, AuthDetails.imgflip_password);
             imgflipper.generateMeme(meme[memetype], tags[1]?tags[1]:"", tags[3]?tags[3]:"", function(err, image){
                 //console.log(arguments);
@@ -240,9 +249,9 @@ var commands = {
     "memehelp": { //TODO: this should be handled by !help
         description: "returns available memes for !meme",
         process: function(bot,msg) {
-            var str = "Currently available memes:\n"
+            var str = "Currently available memes:\n";
             for (var m in meme){
-                str += m + "\n"
+                str += m + "\n";
             }
             bot.sendMessage(msg.channel,str);
         }
@@ -255,7 +264,7 @@ var commands = {
                 bot.sendMessage(msg.channel,data);
             });
             commit.on('close',function(code) {
-                if( code != 0){
+                if( code !== 0){
                     bot.sendMessage(msg.channel,"failed checking git version!");
                 }
             });
@@ -299,11 +308,11 @@ var commands = {
         description: "joins the server it's invited to",
         process: function(bot,msg,suffix) {
             console.log(bot.joinServer(suffix,function(error,server) {
-                console.log("callback: " + arguments);
+                console.log('callback: ' + arguments);
                 if(error){
                     bot.sendMessage(msg.channel,"failed to join: " + error);
                 } else {
-                    console.log("Joined server " + server);
+                    console.log('Joined server ' + server);
                     bot.sendMessage(msg.channel,"Successfully joined " + server);
                 }
             }));
@@ -313,58 +322,58 @@ var commands = {
         usage: "<channel name>",
         description: "creates a new text channel with the given name.",
         process: function(bot,msg,suffix) {
-            bot.createChannel(msg.channel.server,suffix,"text").then(function(channel) {
+            bot.createChannel(msg.channel.server,suffix,'text').then(function(channel) {
                 bot.sendMessage(msg.channel,"created " + channel);
             }).catch(function(error){
-				bot.sendMessage(msg.channel,"failed to create channel: " + error);
-			});
+        bot.sendMessage(msg.channel,"failed to create channel: " + error);
+      });
         }
     },
-	"voice": {
-		usage: "<channel name>",
-		description: "creates a new voice channel with the give name.",
-		process: function(bot,msg,suffix) {
-            bot.createChannel(msg.channel.server,suffix,"voice").then(function(channel) {
+  "voice": {
+    usage: "<channel name>",
+    description: "creates a new voice channel with the give name.",
+    process: function(bot,msg,suffix) {
+            bot.createChannel(msg.channel.server,suffix,'voice').then(function(channel) {
                 bot.sendMessage(msg.channel,"created " + channel.id);
-				console.log("created " + channel);
+        console.log('created ' + channel);
             }).catch(function(error){
-				bot.sendMessage(msg.channel,"failed to create channel: " + error);
-			});
+        bot.sendMessage(msg.channel,"failed to create channel: " + error);
+      });
         }
-	},
+  },
     "delete": {
         usage: "<channel name>",
         description: "deletes the specified channel",
         process: function(bot,msg,suffix) {
-			var channel = bot.channels.get("id",suffix);
-			if(suffix.startsWith('<#')){
-				channel = bot.channels.get("id",suffix.substr(2,suffix.length-3));
-			}
+      var channel = bot.channels.get('id',suffix);
+      if(suffix.startsWith('<#')){
+        channel = bot.channels.get('id',suffix.substr(2,suffix.length-3));
+      }
             if(!channel){
-				var channels = bot.channels.getAll("name",suffix);
-				if(channels.length > 1){https://github.com/chalda/DiscordBot/issues/new
-					var response = "Multiple channels match, please use id:";
-					for(var i=0;i<channels.length;i++){
-						response += channels[i] + ": " + channels[i].id;
-					}
-					bot.sendMessage(msg.channel,response);
-					return;
-				}else if(channels.length == 1){
-					channel = channels[0];
-				} else {
-					bot.sendMessage(msg.channel, "Couldn't find channel " + suffix + " to delete!");
-					return;
-				}
-			}
+        var channels = bot.channels.getAll('name',suffix);
+        if(channels.length > 1){
+          var response = "Multiple channels match, please use id:";
+          for(var i=0;i<channels.length;i++){
+            response += channels[i] + ": " + channels[i].id;
+          }
+          bot.sendMessage(msg.channel,response);
+          return;
+        }else if(channels.length == 1){
+          channel = channels[0];
+        } else {
+          bot.sendMessage(msg.channel, "Couldn't find channel " + suffix + " to delete!");
+          return;
+        }
+      }
             bot.sendMessage(msg.channel.server.defaultChannel, "deleting channel " + suffix + " at " +msg.author + "'s request");
             if(msg.channel.server.defaultChannel != msg.channel){
                 bot.sendMessage(msg.channel,"deleting " + channel);
             }
             bot.deleteChannel(channel).then(function(channel){
-				console.log("deleted " + suffix + " at " + msg.author + "'s request");
+        console.log("deleted " + suffix + " at " + msg.author + "'s request");
             }).catch(function(error){
-				bot.sendMessage(msg.channel,"couldn't delete channel: " + error);
-			});
+        bot.sendMessage(msg.channel,"couldn't delete channel: " + error);
+      });
         }
     },
     "stock": {
@@ -379,28 +388,27 @@ var commands = {
                     bot.sendMessage(msg.channel,"couldn't get stock: " + error);
                 } else {
                     //bot.sendMessage(msg.channel,JSON.stringify(snapshot));
-                    bot.sendMessage(msg.channel,snapshot.name
-                        + "\nprice: $" + snapshot.lastTradePriceOnly);
+                    bot.sendMessage(msg.channel,snapshot.name + "\nprice: $" + snapshot.lastTradePriceOnly);
                 }
             });
         }
     },
-	"wolfram": {
-		usage: "<search terms>",
+  "wolfram": {
+    usage: "<search terms>",
         description: "gives results from wolframalpha using search terms",
         process: function(bot,msg,suffix){
-				if(!suffix){
-					bot.sendMessage(msg.channel,"Usage: !wolfram <search terms> (Ex. !wolfram integrate 4x)");
-				}
-	            wolfram_plugin.respond(suffix,msg.channel,bot);
-       	    }
-	},
+        if(!suffix){
+          bot.sendMessage(msg.channel,'Usage: !wolfram <search terms> (Ex. !wolfram integrate 4x)');
+        }
+              wolfram_plugin.respond(suffix,msg.channel,bot);
+             }
+  },
     "rss": {
         description: "lists available rss feeds",
         process: function(bot,msg,suffix) {
-            /*var args = suffix.split(" ");
+            /*var args = suffix.split(' ');
             var count = args.shift();
-            var url = args.join(" ");
+            var url = args.join(' ');
             rssfeed(bot,msg,url,count,full);*/
             bot.sendMessage(msg.channel,"Available feeds:", function(){
                 for(var c in rssFeeds){
@@ -413,122 +421,122 @@ var commands = {
         usage: "[subreddit]",
         description: "Returns the top post on reddit. Can optionally pass a subreddit to get the top psot there instead",
         process: function(bot,msg,suffix) {
-            var path = "/.rss"
+            var path = "/.rss";
             if(suffix){
                 path = "/r/"+suffix+path;
             }
             rssfeed(bot,msg,"https://www.reddit.com"+path,1,false);
         }
     },
-	"alias": {
-		usage: "<name> <actual command>",
-		description: "Creates command aliases. Useful for making simple commands on the fly",
-		process: function(bot,msg,suffix) {
-			var args = suffix.split(" ");
-			var name = args.shift();
-			if(!name){
-				bot.sendMessage(msg.channel,"!alias " + this.usage + "\n" + this.description);
-			} else if(commands[name] || name === "help"){
-				bot.sendMessage(msg.channel,"overwriting commands with aliases is not allowed!");
-			} else {
-				var command = args.shift();
-				aliases[name] = [command, args.join(" ")];
-				//now save the new alias
-				require("fs").writeFile("./alias.json",JSON.stringify(aliases,null,2), null);
-				bot.sendMessage(msg.channel,"created alias " + name);
-			}
-		}
-	},
-	"userid": {
-		usage: "[user to get id of]",
-		description: "Returns the unique id of a user. This is useful for permissions.",
-		process: function(bot,msg,suffix) {
-			if(suffix){
-				var users = msg.channel.server.members.getAll("username",suffix);
-				if(users.length == 1){
-					bot.sendMessage(msg.channel, "The id of " + users[0] + " is " + users[0].id)
-				} else if(users.length > 1){
-					var response = "multiple users found:";
-					for(var i=0;i<users.length;i++){
-						var user = users[i];
-						response += "\nThe id of " + user + " is " + user.id;
-					}
-					bot.sendMessage(msg.channel,response);
-				} else {
-					bot.sendMessage(msg.channel,"No user " + suffix + " found!");
-				}
-			} else {
-				bot.sendMessage(msg.channel, "The id of " + msg.author + " is " + msg.author.id);
-			}
-		}
-	},
-	"eval": {
-		usage: "<command>",
-		description: 'Executes arbitrary javascript in the bot process. User must have "eval" permission',
-		process: function(bot,msg,suffix) {
-			if(Permissions.checkPermission(msg.author,"eval")){
-				bot.sendMessage(msg.channel, eval(suffix,bot));
-			} else {
-				bot.sendMessage(msg.channel, msg.author + " doesn't have permission to execute eval!");
-			}
-		}
-	},
-	"topic": {
-		usage: "[topic]",
-		description: 'Sets the topic for the channel. No topic removes the topic.',
-		process: function(bot,msg,suffix) {
-			bot.setChannelTopic(msg.channel,suffix);
-		}
-	},
-	"roll": {
+  "alias": {
+    usage: "<name> <actual command>",
+    description: "Creates command aliases. Useful for making simple commands on the fly",
+    process: function(bot,msg,suffix) {
+      var args = suffix.split(' ');
+      var name = args.shift();
+      if(!name){
+        bot.sendMessage(msg.channel,"!alias " + this.usage + "\n" + this.description);
+      } else if(commands[name] || name === 'help'){
+        bot.sendMessage(msg.channel,'overwriting commands with aliases is not allowed!');
+      } else {
+        var command = args.shift();
+        aliases[name] = [command, args.join(' ')];
+        //now save the new alias
+        require('fs').writeFile('./alias.json',JSON.stringify(aliases,null,2), null);
+        bot.sendMessage(msg.channel,"created alias " + name);
+      }
+    }
+  },
+  "userid": {
+    usage: "[user to get id of]",
+    description: "Returns the unique id of a user. This is useful for permissions.",
+    process: function(bot,msg,suffix) {
+      if(suffix){
+        var users = msg.channel.server.members.getAll('username',suffix);
+        if(users.length == 1){
+          bot.sendMessage(msg.channel, "The id of " + users[0] + " is " + users[0].id);
+        } else if(users.length > 1){
+          var response = "multiple users found:";
+          for(var i=0;i<users.length;i++){
+            var user = users[i];
+            response += "\nThe id of " + user + " is " + user.id;
+          }
+          bot.sendMessage(msg.channel,response);
+        } else {
+          bot.sendMessage(msg.channel,"No user " + suffix + " found!");
+        }
+      } else {
+        bot.sendMessage(msg.channel, "The id of " + msg.author + " is " + msg.author.id);
+      }
+    }
+  },
+  "eval": {
+    usage: "<command>",
+    description: 'Executes arbitrary javascript in the bot process. User must have "eval" permission',
+    process: function(bot,msg,suffix) {
+      if(Permissions.checkPermission(msg.author,'eval')){
+        bot.sendMessage(msg.channel, eval(suffix,bot));
+      } else {
+        bot.sendMessage(msg.channel, msg.author + " doesn't have permission to execute eval!");
+      }
+    }
+  },
+  "topic": {
+    usage: "[topic]",
+    description: 'Sets the topic for the channel. No topic removes the topic.',
+    process: function(bot,msg,suffix) {
+      bot.setChannelTopic(msg.channel,suffix);
+    }
+  },
+  "roll": {
         usage: "[# of sides] or [# of dice]d[# of sides]( + [# of dice]d[# of sides] + ...)",
         description: "roll one die with x sides, or multiple dice using d20 syntax. Default value is 10",
         process: function(bot,msg,suffix) {
-            if (suffix.split("d").length <= 1) {
+            if (suffix.split('d').length <= 1) {
                 bot.sendMessage(msg.channel,msg.author + " rolled a " + d20.roll(suffix || "10"));
             }
-            else if (suffix.split("d").length > 1) {
-                var eachDie = suffix.split("+");
+            else if (suffix.split('d').length > 1) {
+                var eachDie = suffix.split('+');
                 var passing = 0;
                 for (var i = 0; i < eachDie.length; i++){
-                    if (eachDie[i].split("d")[0] < 50) {
+                    if (eachDie[i].split('d')[0] < 50) {
                         passing += 1;
-                    };
+                    }
                 }
                 if (passing == eachDie.length) {
                     bot.sendMessage(msg.channel,msg.author + " rolled a " + d20.roll(suffix));
                 }  else {
-                    bot.sendMessage(msg.channel,msg.author + " tried to roll too many dice at once!");
+                    bot.sendMessage(msg.channel,msg.author + ' tried to roll too many dice at once!');
                 }
             }
         }
     },
-	"msg": {
-		usage: "<user> <message to leave user>",
-		description: "leaves a message for a user the next time they come online",
-		process: function(bot,msg,suffix) {
-			var args = suffix.split(' ');
-			var user = args.shift();
-			var message = args.join(' ');
-			if(user.startsWith('<@')){
-				user = user.substr(2,user.length-3);
-			}
-			var target = msg.channel.server.members.get("id",user);
-			if(!target){
-				target = msg.channel.server.members.get("username",user);
-			}
-			messagebox[target.id] = {
-				channel: msg.channel.id,
-				content: target + ", " + msg.author + " said: " + message
-			};
-			updateMessagebox();
-			bot.sendMessage(msg.channel,"message saved.")
-		}
-	},
-	"twitch": {
-		usage: "<stream>",
-		description: "checks if the given stream is online",
-		process: function(bot,msg,suffix){
+  "msg": {
+    usage: "<user> <message to leave user>",
+    description: "leaves a message for a user the next time they come online",
+    process: function(bot,msg,suffix) {
+      var args = suffix.split(' ');
+      var user = args.shift();
+      var message = args.join(' ');
+      if(user.startsWith('<@')){
+        user = user.substr(2,user.length-3);
+      }
+      var target = msg.channel.server.members.get('id',user);
+      if(!target){
+        target = msg.channel.server.members.get('username',user);
+      }
+      messagebox[target.id] = {
+        channel: msg.channel.id,
+        content: target + ", " + msg.author + " said: " + message
+      };
+      updateMessagebox();
+      bot.sendMessage(msg.channel,'message saved.');
+    }
+  },
+  "twitch": {
+    usage: "<stream>",
+    description: "checks if the given stream is online",
+    process: function(bot,msg,suffix){
       var request = msg.content.split(' ');
       console.log('request',request);
       if(request.length > 3){
@@ -536,10 +544,10 @@ var commands = {
         return;
       }else if(request.length == 2){
         // probably need to extract this to its own function
-        require("request")("https://api.twitch.tv/kraken/streams/"+suffix,
-    			function(err,res,body){
-    				var stream = JSON.parse(body);
-    				if(stream.stream){
+        require('request')('https://api.twitch.tv/kraken/streams/'+suffix,
+          function(err,res,body){
+            var stream = JSON.parse(body);
+            if(stream.stream){
               var streamInfo = suffix
                                 +" is online, playing "
                                 +stream.stream.game
@@ -549,42 +557,42 @@ var commands = {
                                 +"\n"+stream.stream.preview.large
                                 +"\n"+stream.stream.channel.url;
               // console.log(streamInfo);
-    					bot.sendMessage(msg.channel, streamInfo);
+              bot.sendMessage(msg.channel, streamInfo);
               // bot.sendMessage(msg.channel, stream.stream.channel.url);
-    				}else{
-    					bot.sendMessage(msg.channel, suffix+" is offline");
-    				}
-    			});
+            }else{
+              bot.sendMessage(msg.channel, suffix+' is offline');
+            }
+          });
       }else{
         if(request[1] === 'add'){
           bot.sendMessage(msg.channel,'Coming Soon: Ability to add '+request[2]+' stream to the watch list');
         }else{
           commandNotRecognized(msg);
         }
-		}
-	 }
+    }
+   }
   },
-	"xkcd": {
-		usage: "[comic number]",
-		description: "displays a given xkcd comic number (or the latest if nothing specified",
-		process: function(bot,msg,suffix){
-			var url = "http://xkcd.com/";
-			if(suffix != "") url += suffix+"/";
-			url += "info.0.json";
-			require("request")(url,function(err,res,body){
-				try{
-					var comic = JSON.parse(body);
-					bot.sendMessage(msg.channel,
-						comic.title+"\n"+comic.img,function(){
-							bot.sendMessage(msg.channel,comic.alt)
-					});
-				}catch(e){
-					bot.sendMessage(msg.channel,
-						"Couldn't fetch an XKCD for "+suffix);
-				}
-			});
-		}
-	},
+  "xkcd": {
+    usage: "[comic number]",
+    description: "displays a given xkcd comic number (or the latest if nothing specified",
+    process: function(bot,msg,suffix){
+      var url = "http://xkcd.com/";
+      if(suffix !== "") url += suffix+"/";
+      url += "info.0.json";
+      require('request')(url,function(err,res,body){
+        try{
+          var comic = JSON.parse(body);
+          bot.sendMessage(msg.channel,
+            comic.title+"\n"+comic.img,function(){
+              bot.sendMessage(msg.channel,comic.alt);
+          });
+        }catch(e){
+          bot.sendMessage(msg.channel,
+            "Couldn't fetch an XKCD for "+suffix);
+        }
+      });
+    }
+  },
     "watchtogether": {
         usage: "[video url (Youtube, Vimeo)",
         description: "Generate a watch2gether room with your video to watch with your little friends!",
@@ -592,88 +600,88 @@ var commands = {
             var watch2getherUrl = "https://www.watch2gether.com/go#";
             bot.sendMessage(msg.channel,
                 "watch2gether link",function(){
-                    bot.sendMessage(msg.channel,watch2getherUrl + suffix)
-                })
+                    bot.sendMessage(msg.channel,watch2getherUrl + suffix);
+                });
         }
     },
     "uptime": {
-    	usage: "",
-    	description: "returns the amount of time since the bot started",
-    	process: function(bot,msg,suffix){
-    		var now = Date.now();
-    		var msec = now - startTime;
-    		console.log("Uptime is " + msec + " milliseconds");
-    		var days = Math.floor(msec / 1000 / 60 / 60 / 24);
-    		msec -= days * 1000 * 60 * 60 * 24;
-    		var hours = Math.floor(msec / 1000 / 60 / 60);
-    		msec -= hours * 1000 * 60 * 60;
-    		var mins = Math.floor(msec / 1000 / 60);
-    		msec -= mins * 1000 * 60;
-    		var secs = Math.floor(msec / 1000);
-    		var timestr = "";
-    		if(days > 0) {
-    			timestr += days + " days ";
-    		}
-    		if(hours > 0) {
-    			timestr += hours + " hours ";
-    		}
-    		if(mins > 0) {
-    			timestr += mins + " minutes ";
-    		}
-    		if(secs > 0) {
-    			timestr += secs + " seconds ";
-    		}
-    		bot.sendMessage(msg.channel,"Uptime: " + timestr);
-    	}
+      usage: "",
+      description: "returns the amount of time since the bot started",
+      process: function(bot,msg,suffix){
+        var now = Date.now();
+        var msec = now - startTime;
+        console.log('Uptime is " + msec + " milliseconds');
+        var days = Math.floor(msec / 1000 / 60 / 60 / 24);
+        msec -= days * 1000 * 60 * 60 * 24;
+        var hours = Math.floor(msec / 1000 / 60 / 60);
+        msec -= hours * 1000 * 60 * 60;
+        var mins = Math.floor(msec / 1000 / 60);
+        msec -= mins * 1000 * 60;
+        var secs = Math.floor(msec / 1000);
+        var timestr = "";
+        if(days > 0) {
+          timestr += days + " days ";
+        }
+        if(hours > 0) {
+          timestr += hours + " hours ";
+        }
+        if(mins > 0) {
+          timestr += mins + " minutes ";
+        }
+        if(secs > 0) {
+          timestr += secs + " seconds ";
+        }
+        bot.sendMessage(msg.channel,"Uptime: " + timestr);
+      }
     },
     "translate": {
       usage: "[text targetLang(de, en, etc)]",
       description: "Translate text using Google Translate.",
       process: function(bot,msg,suffix){
         if(!suffix){
-          bot.sendMessage(msg.channel,"Usage: !translate <search terms> <target language> (Ex. !translate my butt itches de)");
+          bot.sendMessage(msg.channel,'Usage: !translate <search terms> <target language> (Ex. !translate my butt itches de)');
         }
         google_translate.respond(suffix,msg.channel,bot);
- 	    }
+       }
     }
 };
 try{
-var rssFeeds = require("./rss.json");
-function loadFeeds(){
-    for(var cmd in rssFeeds){
-        commands[cmd] = {
-            usage: "[count]",
-            description: rssFeeds[cmd].description,
-            url: rssFeeds[cmd].url,
-            process: function(bot,msg,suffix){
-                var count = 1;
-                if(suffix != null && suffix != "" && !isNaN(suffix)){
-                    count = suffix;
-                }
-                rssfeed(bot,msg,this.url,count,false);
-            }
-        };
-    }
-}
+  var rssFeeds = require('./rss.json');
+  var loadFeeds = function(){
+      for(var cmd in rssFeeds){
+          commands[cmd] = {
+              usage: "[count]",
+              description: rssFeeds[cmd].description,
+              url: rssFeeds[cmd].url,
+              process: function(bot,msg,suffix){
+                  var count = 1;
+                  if(suffix !== null && suffix !== "" && !isNaN(suffix)){
+                      count = suffix;
+                  }
+                  rssfeed(bot,msg,this.url,count,false);
+              }
+          };
+      }
+  };
 } catch(e) {
-    console.log("Couldn't load rss.json. See rss.json.example if you want rss feed commands. error: " + e);
-}
-
-try{
-	aliases = require("./alias.json");
-} catch(e) {
-	//No aliases defined
-	aliases = {};
+    console.log('Couldn\'t load rss.json. See rss.json.example if you want rss feed commands. error: ' + e);
 }
 
 try{
-	messagebox = require("./messagebox.json");
+  aliases = require('./alias.json');
 } catch(e) {
-	//no stored messages
-	messagebox = {};
+  //No aliases defined
+  aliases = {};
+}
+
+try{
+  messagebox = require('./messagebox.json');
+} catch(e) {
+  //no stored messages
+  messagebox = {};
 }
 function updateMessagebox(){
-	require("fs").writeFile("./messagebox.json",JSON.stringify(messagebox,null,2), null);
+  require('fs').writeFile('./messagebox.json',JSON.stringify(messagebox,null,2), null);
 }
 
 function rssfeed(bot,msg,url,count,full){
@@ -687,7 +695,7 @@ function rssfeed(bot,msg,url,count,full){
     var shown = 0;
     feedparser.on('readable',function() {
         var stream = this;
-        shown += 1
+        shown += 1;
         if(shown > count){
             return;
         }
@@ -706,108 +714,211 @@ function rssfeed(bot,msg,url,count,full){
 }
 
 function commandNotRecognized(msg){
-  bot.sendMessage(msg.channel, "Sorry, I do not understand `"+msg.content+"`. Use `!help` if you are having trouble.");
+  bot.sendMessage(msg.channel, 'Sorry, I do not understand `"+msg.content+"`. Use `!help` if you are having trouble.');
 }
 
 var bot = new Discord.Client();
 
-bot.on("ready", function () {
+bot.on('ready', function () {
     loadFeeds();
-	console.log("Ready to begin! Serving in " + bot.channels.length + " channels");
-	require("./plugins.js").init();
+  console.log('Ready to begin! Serving in " + bot.channels.length + " channels');
+  require('./plugins.js').init();
 });
 
-bot.on("disconnected", function () {
+bot.on('disconnected', function () {
 
-	console.log("Disconnected!");
-	process.exit(1); //exit node.js with an error
+  console.log('Disconnected!');
+  process.exit(1); //exit node.js with an error
 
 });
 
-bot.on("message", function (msg) {
-	//check if message is a command
-	if(msg.author.id != bot.user.id && (msg.content[0] === '!' || msg.content.indexOf(bot.user.mention()) == 0)){
-        console.log("treating " + msg.content + " from " + msg.author + " as command");
-		var cmdTxt = msg.content.split(" ")[0].substring(1);
+bot.on('message', function (msg) {
+  //check if message is a command
+  if(msg.author.id != bot.user.id && (msg.content[0] === '!' || msg.content.indexOf(bot.user.mention()) === 0)){
+        console.log('treating " + msg.content + " from " + msg.author + " as command');
+    var cmdTxt = msg.content.split(' ')[0].substring(1);
         var suffix = msg.content.substring(cmdTxt.length+2);//add one for the ! and one for the space
-        if(msg.content.indexOf(bot.user.mention()) == 0){
-			try {
-				cmdTxt = msg.content.split(" ")[1];
-				suffix = msg.content.substring(bot.user.mention().length+cmdTxt.length+2);
-			} catch(e){ //no command
-				bot.sendMessage(msg.channel,"Yes?");
-				return;
-			}
+        if(msg.content.indexOf(bot.user.mention()) === 0){
+      try {
+        cmdTxt = msg.content.split(' ')[1];
+        suffix = msg.content.substring(bot.user.mention().length+cmdTxt.length+2);
+      } catch(e){ //no command
+        bot.sendMessage(msg.channel,'Yes?');
+        return;
+      }
         }
-		alias = aliases[cmdTxt];
-		if(alias){
-			console.log(cmdTxt + " is an alias, constructed command is " + alias.join(" ") + " " + suffix);
-			cmdTxt = alias[0];
-			suffix = alias[1] + " " + suffix;
-		}
-		var cmd = commands[cmdTxt];
-        if(cmdTxt === "help"){
+    alias = aliases[cmdTxt];
+    if(alias){
+      console.log(cmdTxt + " is an alias, constructed command is " + alias.join(' ') + " " + suffix);
+      cmdTxt = alias[0];
+      suffix = alias[1] + " " + suffix;
+    }
+    var cmd = commands[cmdTxt];
+        if(cmdTxt === 'help'){
             //help is special since it iterates over the other commands
-			bot.sendMessage(msg.author,"Available Commands:", function(){
-				for(var cmd in commands) {
-					var info = "!" + cmd;
-					var usage = commands[cmd].usage;
-					if(usage){
-						info += " " + usage;
-					}
-					var description = commands[cmd].description;
-					if(description){
-						info += "\n\t" + description;
-					}
-					bot.sendMessage(msg.author,info);
-				}
-			});
+          bot.sendMessage(msg.author,"Available Commands:", function(){
+            for(var cmd in commands) {
+              var info = "!" + cmd;
+              var usage = commands[cmd].usage;
+              if(usage){
+                info += " " + usage;
+              }
+              var description = commands[cmd].description;
+              if(description){
+                info += "\n\t" + description;
+              }
+              bot.sendMessage(msg.author,info);
+            }
+          });
         }
-		else if(cmd) {
-			try{
-				cmd.process(bot,msg,suffix);
-			} catch(e){
-				if(Config.debug){
-					bot.sendMessage(msg.channel, "command " + cmdTxt + " failed :(\n" + e.stack);
-				}
-			}
-		} else {
-			if(Config.respondToInvalid){
-				bot.sendMessage(msg.channel, "Invalid command " + cmdTxt);
-			}
-		}
-	} else {
-		//message isn't a command or is from us
+    else if(cmd) {
+      try{
+        cmd.process(bot,msg,suffix);
+      } catch(e){
+        if(Config.debug){
+          bot.sendMessage(msg.channel, "command " + cmdTxt + " failed :(\n" + e.stack);
+        }
+      }
+    } else {
+      if(Config.respondToInvalid){
+        bot.sendMessage(msg.channel, "Invalid command `" + cmdTxt+"`");
+      }
+    }
+  } else {
+    //message isn't a command or is from us
         //drop our own messages to prevent feedback loops
         if(msg.author == bot.user){
             return;
         }
 
         if (msg.author != bot.user && msg.isMentioned(bot.user)) {
-                bot.sendMessage(msg.channel,msg.author + ", you called?");
+                bot.sendMessage(msg.channel,msg.author + ', you called?');
         }
     }
 });
 
 
 //Log user status changes
-bot.on("presence", function(user,status,gameId) {
-	//if(status === "online"){
-	//console.log("presence update");
-	console.log(user+" went "+status);
-	//}
-	try{
-	if(status != 'offline'){
-		if(messagebox.hasOwnProperty(user.id)){
-			console.log("found message for " + user.id);
-			var message = messagebox[user.id];
-			var channel = bot.channels.get("id",message.channel);
-			delete messagebox[user.id];
-			updateMessagebox();
-			bot.sendMessage(channel,message.content);
-		}
-	}
-	}catch(e){}
+bot.on('presence', function(user,status,gameId) {
+  //if(status === "online'){
+  //console.log('presence update');
+  console.log(user+" went "+status);
+  //}
+  try{
+  if(status != 'offline'){
+    if(messagebox.hasOwnProperty(user.id)){
+      console.log('found message for ' + user.id);
+      var message = messagebox[user.id];
+      var channel = bot.channels.get('id',message.channel);
+      delete messagebox[user.id];
+      updateMessagebox();
+      bot.sendMessage(channel,message.content);
+    }
+  }
+  }catch(e){}
+  if (msg.content.substring(0,6) === '!game ') {
+    //ask if anyone wants to play the game
+    var game = msg.content.substring(6);
+    if(game === 'cs') {
+      game = "Counter-Strike";
+    }
+    if(game === 'hots') {
+      game = "Heroes of the Storm";
+    }
+    if(game === 'smite') {
+      game = "Smite";
+    }
+    bot.sendMessage(msg.channel, "@everyone Anyone up for " + game + "?");
+    console.log('sent game invites for ' + game);
+  }
+  else if (msg.content.indexOf('dawnbot') > -1) {
+    bot.sendMessage(msg.channel, 'Hello!');
+  }
+  else if (msg.isMentioned(bot.user)) {
+    var tokens = msg.content.split(' ');
+    tokens.shift();
+    if (tokens[0] === 'servers') {
+      bot.sendMessage(msg.channel,bot.servers);
+    } else if (tokens[0] === 'channels') {
+      bot.sendMessage(msg.channel,bot.channels);
+    } else if (tokens[0] === 'myid') {
+      bot.sendMessage(msg.channel,msg.author.id);
+    } else if (tokens[0] === 'idle') {
+      bot.setStatusIdle();
+    } else if (tokens[0] === 'online') {
+      bot.setStatusOnline();
+    } else if (tokens[0] === 'record') {
+      tokens.shift();
+      var user = bot.getUser('username',tokens.shift());
+      bot.sendMessage(msg.channel,user + "\n" + tokens.join(' '));
+    } else {
+      bot.sendMessage(msg.channel,msg.author + ', you called?');
+    }
+  }
+  else if(msg.content.substring(0,8) === '!youtube') {
+    var tags = msg.content.split(' ');
+    tags.shift();
+    tags = tags.join(' ');
+    youtube_plugin.respond(tags,msg.channel,bot);
+    //bot.sendMessage(msg.channel,youtube_plugin.respond(tags));
+  }
+
+  else if(msg.content.substring(0,4) === '!say') {
+    var tags = msg.content.split(' ');
+    tags.shift();
+    tags = tags.join(' ');
+    bot.sendMessage(msg.channel,tags);
+    //bot.sendMessage(msg.channel,youtube_plugin.respond(tags));
+  }
+
+  else if(msg.content.substring(0,6) === '!image') {
+    var tags = msg.content.split(' ');
+    tags.shift();
+    tags = tags.join(' ');
+    google_image_plugin.respond(tags,msg.channel,bot);
+    //bot.sendMessage(msg.channel,youtube_plugin.respond(tags));
+  }
+  else if(msg.content.substring(0,16) === '!pullanddeploy') {
+    bot.sendMessage(msg.channel,"brb!",function(error,sentMsg){
+      console.log('updating...');
+                  var spawn = require('child_process').spawn;
+      spawn('sh', [ 'pullanddeploy.sh' ], {detached: true});
+      console.log('restart');
+      process.exit();
+    });
+  }
+  else if(msg.content.substring(0,5) === '!meme'){
+    var tags = msg.content.split('"');
+    var memetype = tags[0].split(' ')[1];
+    //bot.sendMessage(msg.channel,tags);
+    var Imgflipper = require('imgflipper');
+    var imgflipper = new Imgflipper(AuthDetails.imgflip_username, AuthDetails.imgflip_password);
+    imgflipper.generateMeme(meme[memetype], tags[1]?tags[1]:"", tags[3]?tags[3]:"", function(err, image){
+      //console.log(arguments);
+      bot.sendMessage(msg.channel,image);
+    });
+
+  }
+  else if(msg.content.substring(0,8) === '!version') {
+    var commit = require('child_process').spawn('git', ['log','-n','1']);
+    commit.stdout.on('data', function(data) {
+      bot.sendMessage(msg.channel,data);
+    });
+    commit.on('close',function(code) {
+      if( code !== 0){
+        bot.sendMessage(msg.channel,'failed checking git version!');
+      }
+    });
+  }
+});
+
+
+//This is supposed to message on user sign on, but doessn't work
+bot.on('presence', function(data) {
+  //if(status === "online'){
+  console.log('presence update');
+  bot.sendMessage(data.server,data.user+" went "+data.status);
+  //}
 });
 
 function get_gif(tags, func) {
@@ -821,22 +932,22 @@ function get_gif(tags, func) {
         var query = qs.stringify(params);
 
         if (tags !== null) {
-            query += "&tag=" + tags.join('+')
+            query += "&tag=" + tags.join('+');
         }
 
         //wouldnt see request lib if defined at the top for some reason:\
-        var request = require("request");
+        var request = require('request');
         //console.log(query)
         request(giphy_config.url + "?" + query, function (error, response, body) {
             //console.log(arguments)
             if (error || response.statusCode !== 200) {
-                console.error("giphy: Got error: " + body);
+                console.error('giphy: Got error: ' + body);
                 console.log(error);
                 //console.log(response)
             }
             else {
                 try{
-                    var responseObj = JSON.parse(body)
+                    var responseObj = JSON.parse(body);
                     func(responseObj.data.id);
                 }
                 catch(err){
@@ -851,9 +962,9 @@ exports.addCommand = function(commandName, commandObject){
     } catch(err){
         console.log(err);
     }
-}
+};
 exports.commandCount = function(){
     return Object.keys(commands).length;
-}
+};
 
 bot.login(AuthDetails.email, AuthDetails.password);
