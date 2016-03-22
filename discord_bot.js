@@ -20,7 +20,7 @@ setInterval(function() {
 
 try {
   var Discord = require('discord.js');
-} catch (e){
+} catch (e) {
   console.log(e.stack);
   console.log(process.version);
   console.log('Please run npm install and ensure it passes with no errors!');
@@ -87,6 +87,7 @@ Permissions.checkPermission = function(user, permission) {
   } catch (e) {
     // die
   }
+
   return false;
 };
 
@@ -108,12 +109,11 @@ var htmlToText = require('html-to-text');
 var startTime = Date.now();
 
 var giphy_config = {
-    "api_key": "dc6zaTOxFJmzC",
-    "rating": "r",
-    "url": "http://api.giphy.com/v1/gifs/random",
-    "permission": ["NORMAL"]
+  "api_key": "dc6zaTOxFJmzC",
+  "rating": "r",
+  "url": "http://api.giphy.com/v1/gifs/random",
+  "permission": ["NORMAL"]
 };
-
 
 //https://api.imgflip.com/popular_meme_ids
 var meme = {
@@ -429,23 +429,24 @@ var commands = {
             rssfeed(bot,msg,"https://www.reddit.com"+path,1,false);
         }
     },
-    usage: "<name> <actual command>",
-    description: "Creates command aliases. Useful for making simple commands on the fly",
-    process: function(bot,msg,suffix) {
-      var args = suffix.split(' ');
-      var name = args.shift();
-      if(!name){
-        bot.sendMessage(msg.channel,"!alias " + this.usage + "\n" + this.description);
-      } else if(commands[name] || name === 'help'){
-        bot.sendMessage(msg.channel,'overwriting commands with aliases is not allowed!');
-      } else {
-        var command = args.shift();
-        aliases[name] = [command, args.join(' ')];
-        //now save the new alias
-        require('fs').writeFile('./alias.json',JSON.stringify(aliases,null,2), null);
-        bot.sendMessage(msg.channel,"created alias " + name);
+    "alias": {
+      usage: "<name> <actual command>",
+      description: "Creates command aliases. Useful for making simple commands on the fly",
+      process: function(bot,msg,suffix) {
+        var args = suffix.split(' ');
+        var name = args.shift();
+        if(!name){
+          bot.sendMessage(msg.channel,"!alias " + this.usage + "\n" + this.description);
+        } else if(commands[name] || name === 'help'){
+          bot.sendMessage(msg.channel,'overwriting commands with aliases is not allowed!');
+        } else {
+          var command = args.shift();
+          aliases[name] = [command, args.join(' ')];
+          //now save the new alias
+          require('fs').writeFile('./alias.json',JSON.stringify(aliases,null,2), null);
+          bot.sendMessage(msg.channel,"created alias " + name);
+        }
       }
-    }
   },
   "userid": {
     usage: "[user to get id of]",
@@ -795,28 +796,7 @@ bot.on('message', function (msg) {
                 bot.sendMessage(msg.channel,msg.author + ', you called?');
         }
     }
-});
-
-
-//Log user status changes
-bot.on('presence', function(user,status,gameId) {
-  //if(status === "online'){
-  //console.log('presence update');
-  console.log(user+" went "+status);
-  //}
-  try{
-  if(status != 'offline'){
-    if(messagebox.hasOwnProperty(user.id)){
-      console.log('found message for ' + user.id);
-      var message = messagebox[user.id];
-      var channel = bot.channels.get('id',message.channel);
-      delete messagebox[user.id];
-      updateMessagebox();
-      bot.sendMessage(channel,message.content);
-    }
-  }
-  }catch(e){}
-  if (msg.content.substring(0,6) === '!game ') {
+   if (msg.content.substring(0,6) === '!game ') {
     //ask if anyone wants to play the game
     var game = msg.content.substring(6);
     if(game === 'cs') {
@@ -916,7 +896,7 @@ bot.on('presence', function(user,status,gameId) {
 //This is supposed to message on user sign on, but doessn't work
 bot.on('presence', function(data) {
   //if(status === "online'){
-  console.log('presence update');
+  console.log('presence update:',data.user+" went "+data.status);
   bot.sendMessage(data.server,data.user+" went "+data.status);
   //}
 });
