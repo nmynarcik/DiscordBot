@@ -17,6 +17,7 @@
     "feedparser": "1.1.x",
     "google": "1.1.x",
     "google-images": "0.1.x",
+    "google-translate": "^1.0.6",
     "html-to-text": "1.5.x",
     "imgflipper": "1.0.x",
     "newrelic": "^1.25.5",
