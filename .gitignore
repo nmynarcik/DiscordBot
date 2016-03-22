@@ -27,11 +27,9 @@ build/Release
 node_modules
 
 #config files
-#auth.json
-#rss.json
-#alias.json
-#permissions.json
-#messagebox.json
-<<<<<<< HEAD
-bfg-1.12.8 (1).jar
 auth.json
+rss.json
+alias.json
+permissions.json
+messagebox.json
+bfg-1.12.8 (1).jar
