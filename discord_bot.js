@@ -1,4 +1,8 @@
-require('newrelic');
+try {
+  require('newrelic');
+} catch (e) {
+  console.log('NewRelic is broken...');
+}
 var express = require('express');
 var app     = express();
 
