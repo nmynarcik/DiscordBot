@@ -52,12 +52,12 @@ You can create an rss.json file adding rss feeds as commands. See rss.json.examp
 
 6) Then press "Search engine ID" under the Details header.
 
-7) ~Copy this into the auth.json's "google_custom_search" section.~ Put this info in your site's environment variables
+7) ~~Copy this into the auth.json's "google_custom_search" section.~~ Put this info in your site's environment variables
 
 Make sure you also have your google server API key, which goes in the "youtube_api_key" section, or the search will fail.
 
 # Running
-~Before first run you will need to create an `auth.json` file. The email and password for a discord account are required. The other credentials are not required for the bot to run, but highly recommended as commands that depend on them will malfunction. See `auth.json.example`.~
+~~Before first run you will need to create an `auth.json` file. The email and password for a discord account are required. The other credentials are not required for the bot to run, but highly recommended as commands that depend on them will malfunction. See `auth.json.example`.~~
 
 I stopped using the `auth.json` file just because I got tired of pushing it to herokuapp but not to this repo. So, I am now taking advantage of Heroku's on runtime [environment variables](https://devcenter.heroku.com/articles/config-vars).
 
@@ -80,16 +80,16 @@ issues with this, you can try deleting your node_modules folder and then running
 # Changelog
 This is a changelog since my fork of this repo. Sorted by latest.
 
-## 0.0.4
-### 3/23/2016
+### 0.0.4
+###### 3/23/2016
 * Added [Added leet and urban commands](https://github.com/Ulydev/DiscordBot/commit/635b8e57aac343de09e572fae1fbb39b5f9f105f)
 
-## 0.0.3
+### 0.0.3
 * Pulled latest from upstream. Broken stuff everywhere!
 * Removed Auth.json dependency. Now will grab environment variables from Heroku.
 
-## 0.0.2
+### 0.0.2
 * Addition of Google Translate. (TIL: You need a billing account to use.)
 
-## 0.0.1
+### 0.0.1
 Edit of Twitch functionality. Provide the amount of viewers currently watching the streamer and some other goodies.
