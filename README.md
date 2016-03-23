@@ -1,5 +1,5 @@
 # DiscordBot
-A chat bot for discord app based off <a href="https://github.com/hydrabolt/discord.js/">discord.js</a>
+This is a forked version of [Chalda's DiscordBot](https://github.com/chalda/DiscordBot). They had a good starting point and I am just adding/tweaking to my needs.
 
 # Features:
 - !gif query => returns a gif example !gif cute cats doing stuff
@@ -13,6 +13,7 @@ A chat bot for discord app based off <a href="https://github.com/hydrabolt/disco
 - !join-server => bot will join the requested server
 - !talk => talk with the bot!
 - @botname => responds when @mentioned
+- !translate will can provide translations for text (ex. !translate hello world de)
 - channel management!
 
 And much more! Try !help to get a full list of available commands
@@ -51,12 +52,14 @@ You can create an rss.json file adding rss feeds as commands. See rss.json.examp
 
 6) Then press "Search engine ID" under the Details header.
 
-7) Copy this into the auth.json's "google_custom_search" section.
+7) ~Copy this into the auth.json's "google_custom_search" section.~ Put this info in your site's environment variables
 
 Make sure you also have your google server API key, which goes in the "youtube_api_key" section, or the search will fail.
 
 # Running
-Before first run you will need to create an `auth.json` file. The email and password for a discord account are required. The other credentials are not required for the bot to run, but highly recommended as commands that depend on them will malfunction. See `auth.json.example`.
+~Before first run you will need to create an `auth.json` file. The email and password for a discord account are required. The other credentials are not required for the bot to run, but highly recommended as commands that depend on them will malfunction. See `auth.json.example`.~
+
+I stopped using the `auth.json` file just because I got tired of pushing it to herokuapp but not to this repo. So, I am now taking advantage of Heroku's on runtime [environment variables](https://devcenter.heroku.com/articles/config-vars).
 
 To start the bot just run
 `node discord_bot.js`.
@@ -67,9 +70,22 @@ issues with this, you can try deleting your node_modules folder and then running
 `npm install` again. Please see [Installation](#Installation).
 
 # ToDo:
-All the things!
+* Automatic posting of new items posted to a watched RSS feed
+* Automatic posting when a watched streamer goes live
+* Have it play music in a specified channel
+* Perhaps some compiling and basic JS testing?
+* Add `!define` feature
+* Hmm, what else?...
 
-# Help
-Please check github issues page on this project. We get a lot of the same questions, its very likely yours has already been answered. And yes we need to roll those into an official FAQ.
+# Changelog
+This is a changelog since my fork of this repo. Sorted by latest.
 
-If you still need help join us on [discord.](https://discordapp.com/channels/101830623957639168/101830623957639168)
+## 0.0.3
+* Pulled latest from upstream. Broken stuff everywhere!
+* Removed Auth.json dependency. Now will grab environment variables from Heroku.
+
+## 0.0.2
+* Addition of Google Translate. (TIL: You need a billing account to use.)
+
+## 0.0.1
+Edit of Twitch functionality. Provide the amount of viewers currently watching the streamer and some other goodies.
