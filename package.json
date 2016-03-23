@@ -32,6 +32,7 @@
     , "leet": "^1.2.7"
     , "urban": "^0.3.0"
     , "html-to-text": "1.5.x"
+    , "newrelic": "^1.25.5"
 	, "npm":""
   },
   "main": "discord_bot.js"
