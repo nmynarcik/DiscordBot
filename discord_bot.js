@@ -28,22 +28,22 @@ try {
 }
 
 try {
-	var urban = require("urban");
-} catch (e){
-	console.log("couldn't load urban plugin!\n"+e.stack);
+  var urban = require("urban");
+} catch (e) {
+  console.log("couldn't load urban plugin!\n"+e.stack);
 }
 
 try {
-	var leet = require("leet");
+  var leet = require("leet");
 } catch (e){
-	console.log("couldn't load leet plugin!\n"+e.stack);
+  console.log("couldn't load leet plugin!\n"+e.stack);
 }
 
 try {
-	var yt = require("./youtube_plugin");
-	var youtube_plugin = new yt();
+  var yt = require("./youtube_plugin");
+  var youtube_plugin = new yt();
 } catch(e){
-	console.log("couldn't load youtube plugin!\n"+e.stack);
+  console.log("couldn't load youtube plugin!\n"+e.stack);
 }
 
 try {
@@ -63,21 +63,22 @@ try {
 // Get authentication data
 try {
   // Should only work locally now
-  var AuthDetails = require('./auth.json');
+  console.log('Loading Config Variables from Environment');
+  var AuthDetails = {
+    "email" : process.env.EMAIL,
+    "password" : process.env.PASSWORD,
+    "youtube_api_key": process.env.YOUTUBE_API_KEY,
+    "google_custom_search": process.env.GOOGLE_CUSTOM_SEARCH,
+    "imgflip_username": process.env.IMGFLIP_USERNAME,
+    "imgflip_password": process.env.IMGFLIP_PASSWORD,
+    "wolfram_api_key": process.env.WOLFRAM_API_KEY,
+    "google_translate": process.env.GOOGLE_TRANSLATE
+  }
 } catch (e) {
   //console.log('Please create an auth.json like auth.json.example with at least an email and password.\n' + e.stack);
   // process.exit();
-  console.log('Loading Config Variables from Environment');
-  var AuthDetails = {
-  	"email" : process.env.EMAIL,
-  	"password" : process.env.PASSWORD,
-  	"youtube_api_key": process.env.YOUTUBE_API_KEY,
-  	"google_custom_search": process.env.GOOGLE_CUSTOM_SEARCH,
-  	"imgflip_username": process.env.IMGFLIP_USERNAME,
-  	"imgflip_password": process.env.IMGFLIP_PASSWORD,
-  	"wolfram_api_key": process.env.WOLFRAM_API_KEY,
-  	"google_translate": process.env.GOOGLE_TRANSLATE
-  }
+  console.log('Loading Config from auth.json');
+  var AuthDetails = require('./auth.json');
 }
 
 // Load custom permissions
@@ -141,19 +142,19 @@ var giphy_config = {
 
 //https://api.imgflip.com/popular_meme_ids
 var meme = {
-	"brace": 61546,
-	"mostinteresting": 61532,
-	"fry": 61520,
-	"onedoesnot": 61579,
-	"yuno": 61527,
-	"success": 61544,
-	"allthethings": 61533,
-	"doge": 8072285,
-	"drevil": 40945639,
-	"skeptical": 101711,
-	"notime": 442575,
-	"yodawg": 101716,
-	"awkwardpenguin": 61584
+  "brace": 61546,
+  "mostinteresting": 61532,
+  "fry": 61520,
+  "onedoesnot": 61579,
+  "yuno": 61527,
+  "success": 61544,
+  "allthethings": 61533,
+  "doge": 8072285,
+  "drevil": 40945639,
+  "skeptical": 101711,
+  "notime": 442575,
+  "yodawg": 101716,
+  "awkwardpenguin": 61584
 };
 
 var aliases;
@@ -215,7 +216,7 @@ var commands = {
         description: "bot says message",
         process: function(bot,msg,suffix){ bot.sendMessage(msg.channel,suffix);}
     },
-		"announce": {
+    "announce": {
         usage: "<message>",
         description: "bot says message with text to speech",
         process: function(bot,msg,suffix){ bot.sendMessage(msg.channel,suffix,{tts:true});}
@@ -618,31 +619,47 @@ var commands = {
       });
     }
   },
+  "game": {
+    usage: "!game <name/acronym of game>",
+    description: "will send out an invite to `@everyone` in channel to play game",
+    process: function(bot,msg,suffix){
+      // ask if anyone wants to play the game
+      var game = suffix;
+      if(game === 'cs') {
+        game = "Counter-Strike";
+      }
+      if(game === 'hots') {
+        game = "Heroes of the Storm";
+      }
+      bot.sendMessage(msg.channel, "@everyone Anyone up for " + game + "?");
+      console.log('sent game invites for ' + game);
+    }
+  },
   "urban": {
-			usage: "<word>",
-			description: "looks up a word on Urban Dictionary",
-			process: function(bot,msg,suffix){
-					var targetWord = suffix == "" ? urban.random() : urban(suffix);
-					targetWord.first(function(json) {
-							if (json) {
-								var message = "Urban Dictionary: **" +json.word + "**\n\n" + json.definition;
-								if (json.example) {
-										message = message + "\n\n__Example__:\n" + json.example;
-								}
-						    bot.sendMessage(msg.channel,message);
-							} else {
-								bot.sendMessage(msg.channel,"No matches found");
-							}
-					});
-			}
-	},
-	"leet": {
-		usage: "<message>",
-		description: "converts boring regular text to 1337",
-		process: function(bot,msg,suffix){
-				bot.sendMessage(msg.channel,leet.convert(suffix));
-		}
-	},
+      usage: "<word>",
+      description: "looks up a word on Urban Dictionary",
+      process: function(bot,msg,suffix){
+          var targetWord = suffix === "" ? urban.random() : urban(suffix);
+          targetWord.first(function(json) {
+              if (json) {
+                var message = "Urban Dictionary: **" +json.word + "**\n\n" + json.definition;
+                if (json.example) {
+                    message = message + "\n\n__Example__:\n" + json.example;
+                }
+                bot.sendMessage(msg.channel,message);
+              } else {
+                bot.sendMessage(msg.channel,"No matches found");
+              }
+          });
+      }
+  },
+  "leet": {
+    usage: "<message>",
+    description: "converts boring regular text to 1337",
+    process: function(bot,msg,suffix){
+        bot.sendMessage(msg.channel,leet.convert(suffix));
+    }
+  },
     "watchtogether": {
         usage: "[video url (Youtube, Vimeo)",
         description: "Generate a watch2gether room with your video to watch with your little friends!",
@@ -764,14 +781,14 @@ function rssfeed(bot,msg,url,count,full){
 }
 
 function commandNotRecognized(msg){
-  bot.sendMessage(msg.channel, 'Sorry, I do not understand `"+msg.content+"`. Use `!help` if you are having trouble.');
+  bot.sendMessage(msg.channel, 'Sorry, I do not understand `' + msg.content + '`. Use `!help` if you are having trouble.');
 }
 
 var bot = new Discord.Client();
 
 bot.on('ready', function () {
     loadFeeds();
-  console.log('Ready to begin! Serving in " + bot.channels.length + " channels');
+  console.log('Ready to begin! Serving in ' + bot.channels.length + ' channels');
   require('./plugins.js').init();
 });
 
@@ -832,132 +849,28 @@ bot.on('message', function (msg) {
         bot.sendMessage(msg.channel, "Invalid command `" + cmdTxt+"`");
       }
     }
-  } else {
-    //message isn't a command or is from us
-        //drop our own messages to prevent feedback loops
-        if(msg.author == bot.user){
-            return;
-        }
-
-        if (msg.author != bot.user && msg.isMentioned(bot.user)) {
-                bot.sendMessage(msg.channel,msg.author + ', you called?');
-        }
-    }
-   if (msg.content.substring(0,6) === '!game ') {
-    //ask if anyone wants to play the game
-    var game = msg.content.substring(6);
-    if(game === 'cs') {
-      game = "Counter-Strike";
-    }
-    if(game === 'hots') {
-      game = "Heroes of the Storm";
-    }
-    if(game === 'smite') {
-      game = "Smite";
-    }
-    bot.sendMessage(msg.channel, "@everyone Anyone up for " + game + "?");
-    console.log('sent game invites for ' + game);
-  }
-  else if (msg.content.indexOf('dawnbot') > -1) {
-    bot.sendMessage(msg.channel, 'Hello!');
-  }
-  else if (msg.isMentioned(bot.user)) {
-    var tokens = msg.content.split(' ');
-    tokens.shift();
-    if (tokens[0] === 'servers') {
-      bot.sendMessage(msg.channel,bot.servers);
-    } else if (tokens[0] === 'channels') {
-      bot.sendMessage(msg.channel,bot.channels);
-    } else if (tokens[0] === 'myid') {
-      bot.sendMessage(msg.channel,msg.author.id);
-    } else if (tokens[0] === 'idle') {
-      bot.setStatusIdle();
-    } else if (tokens[0] === 'online') {
-      bot.setStatusOnline();
-    } else if (tokens[0] === 'record') {
-      tokens.shift();
-      var user = bot.getUser('username',tokens.shift());
-      bot.sendMessage(msg.channel,user + "\n" + tokens.join(' '));
-    } else {
-      bot.sendMessage(msg.channel,msg.author + ', you called?');
-    }
-  }
-  else if(msg.content.substring(0,8) === '!youtube') {
-    var tags = msg.content.split(' ');
-    tags.shift();
-    tags = tags.join(' ');
-    youtube_plugin.respond(tags,msg.channel,bot);
-    //bot.sendMessage(msg.channel,youtube_plugin.respond(tags));
-  }
-
-  else if(msg.content.substring(0,4) === '!say') {
-    var tags = msg.content.split(' ');
-    tags.shift();
-    tags = tags.join(' ');
-    bot.sendMessage(msg.channel,tags);
-    //bot.sendMessage(msg.channel,youtube_plugin.respond(tags));
-  }
-
-  else if(msg.content.substring(0,6) === '!image') {
-    var tags = msg.content.split(' ');
-    tags.shift();
-    tags = tags.join(' ');
-    google_image_plugin.respond(tags,msg.channel,bot);
-    //bot.sendMessage(msg.channel,youtube_plugin.respond(tags));
-  }
-  else if(msg.content.substring(0,16) === '!pullanddeploy') {
-    bot.sendMessage(msg.channel,"brb!",function(error,sentMsg){
-      console.log('updating...');
-                  var spawn = require('child_process').spawn;
-      spawn('sh', [ 'pullanddeploy.sh' ], {detached: true});
-      console.log('restart');
-      process.exit();
-    });
-  }
-  else if(msg.content.substring(0,5) === '!meme'){
-    var tags = msg.content.split('"');
-    var memetype = tags[0].split(' ')[1];
-    //bot.sendMessage(msg.channel,tags);
-    var Imgflipper = require('imgflipper');
-    var imgflipper = new Imgflipper(AuthDetails.imgflip_username, AuthDetails.imgflip_password);
-    imgflipper.generateMeme(meme[memetype], tags[1]?tags[1]:"", tags[3]?tags[3]:"", function(err, image){
-      //console.log(arguments);
-      bot.sendMessage(msg.channel,image);
-    });
-
-  }
-  else if(msg.content.substring(0,8) === '!version') {
-    var commit = require('child_process').spawn('git', ['log','-n','1']);
-    commit.stdout.on('data', function(data) {
-      bot.sendMessage(msg.channel,data);
-    });
-    commit.on('close',function(code) {
-      if( code !== 0){
-        bot.sendMessage(msg.channel,'failed checking git version!');
-      }
-    });
   }
 });
 
 
 //Log user status changes
 bot.on("presence", function(user,status,gameId) {
-	//if(status === "online"){
-	//console.log("presence update");
-	console.log(user+" went "+status);
-	//}
-	try{
-	if(status != 'offline'){
-		if(messagebox.hasOwnProperty(user.id)){
-			console.log("found message for " + user.id);
-			var message = messagebox[user.id];
-			var channel = bot.channels.get("id",message.channel);
-			delete messagebox[user.id];
-			updateMessagebox();
-			bot.sendMessage(channel,message.content);
-		}
-	}
-	}catch(e){}
+  //if(status === "online"){
+  //console.log("presence update");
+  console.log(user+" went "+status);
+  //}
+  try{
+  if(status != 'offline'){
+    if(messagebox.hasOwnProperty(user.id)){
+      console.log("found message for " + user.id);
+      var message = messagebox[user.id];
+      var channel = bot.channels.get("id",message.channel);
+      delete messagebox[user.id];
+      updateMessagebox();
+      bot.sendMessage(channel,message.content);
+    }
+  }
+  }catch(e){}
 });
 
 function get_gif(tags, func) {

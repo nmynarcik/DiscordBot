@@ -13,27 +13,8 @@
   "dependencies": {
     "d20": "^1.4.0",
     "discord.js": "<=5.2.x",
-<<<<<<< HEAD
     "express": "^4.13.4",
-    "feedparser": "1.1.x",
-    "google": "1.1.x",
-    "google-images": "0.1.x",
     "google-translate": "^1.0.6",
-    "html-to-text": "1.5.x",
-    "imgflipper": "1.0.x",
-    "newrelic": "^1.25.5",
-    "nock": "1.7.x",
-    "npm": "",
-    "querystring": "0.2.x",
-    "sinon": "1.14.x",
-    "tumblr.js": "0.0.x",
-    "underscore": "1.8.x",
-    "wikijs": "0.1.x",
-    "winston": "1.0.x",
-    "wolfram": "0.3.x",
-    "yahoo-finance": "0.2.x",
-    "youtube-node": "1.2.x"
-=======
     "querystring": "0.2.x"
     , "underscore": "1.8.x"
     , "winston": "1.0.x"
@@ -52,7 +33,6 @@
     , "urban": "^0.3.0"
     , "html-to-text": "1.5.x"
 	, "npm":""
->>>>>>> 635b8e57aac343de09e572fae1fbb39b5f9f105f
   },
   "main": "discord_bot.js"
 }

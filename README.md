@@ -82,7 +82,7 @@ This is a changelog since my fork of this repo. Sorted by latest.
 
 ### 0.0.4
 ###### 3/23/2016
-* Added [Added leet and urban commands](https://github.com/Ulydev/DiscordBot/commit/635b8e57aac343de09e572fae1fbb39b5f9f105f)
+* Added [leet and urban commands](https://github.com/Ulydev/DiscordBot/commit/635b8e57aac343de09e572fae1fbb39b5f9f105f)
 
 ### 0.0.3
 * Pulled latest from upstream. Broken stuff everywhere!
