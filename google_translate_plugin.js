@@ -1,5 +1,5 @@
 var util = require('util');
-var AuthDetails = require('./auth.json');
+var AuthDetails; // = require('./auth.json');
 var googleTranslate;
 
 function GoogleTranslate() {
