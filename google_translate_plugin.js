@@ -4,7 +4,7 @@ var googleTranslate;
 
 function GoogleTranslate() {
   //console.log('::GoogleTranslate Init::');
-  googleTranslate = require('google-translate')(AuthDetails.google_translate);
+  googleTranslate = require('google-translate')(process.env.GOOGLE_TRANSLATE);
 };
 
 GoogleTranslate.prototype.respond = function(query, channel, bot) {
