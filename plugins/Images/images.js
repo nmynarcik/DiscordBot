@@ -1,5 +1,9 @@
 var request = require("request");
-var AuthDetails = require("../../auth.json");
+// var AuthDetails = require("../../auth.json");
+var AuthDetails = {
+	youtube_api_key: process.env.YOUTUBE_API_KEY,
+	google_custom_search: process.env.GOOGLE_CUSTOM_SEARCH
+}
 
 exports.commands = [
 	"image", //gives top image from google search

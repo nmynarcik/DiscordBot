@@ -1,11 +1,11 @@
 var util = require('util');
 var winston = require('winston');
 var wolfram_node = require('wolfram');
-var AuthDetails = require("./auth.json");
+// var AuthDetails = require("./auth.json");
 
 
 function WolframPlugin () {
-	this.wolfram = wolfram_node.createClient(AuthDetails.wolfram_api_key)
+	this.wolfram = wolfram_node.createClient(process.env.WOLFRAM_API_KEY);
 };
 
 
