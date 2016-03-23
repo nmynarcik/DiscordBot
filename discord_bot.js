@@ -28,10 +28,22 @@ try {
 }
 
 try {
-  var yt = require('./youtube_plugin');
-  var youtube_plugin = new yt();
-} catch (e) {
-  console.log('couldn\'t load youtube plugin!\n' + e.stack);
+	var urban = require("urban");
+} catch (e){
+	console.log("couldn't load urban plugin!\n"+e.stack);
+}
+
+try {
+	var leet = require("leet");
+} catch (e){
+	console.log("couldn't load leet plugin!\n"+e.stack);
+}
+
+try {
+	var yt = require("./youtube_plugin");
+	var youtube_plugin = new yt();
+} catch(e){
+	console.log("couldn't load youtube plugin!\n"+e.stack);
 }
 
 try {
@@ -129,18 +141,19 @@ var giphy_config = {
 
 //https://api.imgflip.com/popular_meme_ids
 var meme = {
-  'brace': 61546,
-  'mostinteresting': 61532,
-  'fry': 61520,
-  'onedoesnot': 61579,
-  'yuno': 61527,
-  'success': 61544,
-  'allthethings': 61533,
-  'doge': 8072285,
-  'drevil': 40945639,
-  'skeptical': 101711,
-  'notime': 442575,
-  'yodawg': 101716
+	"brace": 61546,
+	"mostinteresting": 61532,
+	"fry": 61520,
+	"onedoesnot": 61579,
+	"yuno": 61527,
+	"success": 61544,
+	"allthethings": 61533,
+	"doge": 8072285,
+	"drevil": 40945639,
+	"skeptical": 101711,
+	"notime": 442575,
+	"yodawg": 101716,
+	"awkwardpenguin": 61584
 };
 
 var aliases;
@@ -202,7 +215,7 @@ var commands = {
         description: "bot says message",
         process: function(bot,msg,suffix){ bot.sendMessage(msg.channel,suffix);}
     },
-  "announce": {
+		"announce": {
         usage: "<message>",
         description: "bot says message with text to speech",
         process: function(bot,msg,suffix){ bot.sendMessage(msg.channel,suffix,{tts:true});}
@@ -401,7 +414,6 @@ var commands = {
                 } else {
                     //bot.sendMessage(msg.channel,JSON.stringify(snapshot));
                     bot.sendMessage(msg.channel,snapshot.name + "\nprice: $" + snapshot.lastTradePriceOnly);
-
                 }
             });
         }
@@ -606,6 +618,31 @@ var commands = {
       });
     }
   },
+  "urban": {
+			usage: "<word>",
+			description: "looks up a word on Urban Dictionary",
+			process: function(bot,msg,suffix){
+					var targetWord = suffix == "" ? urban.random() : urban(suffix);
+					targetWord.first(function(json) {
+							if (json) {
+								var message = "Urban Dictionary: **" +json.word + "**\n\n" + json.definition;
+								if (json.example) {
+										message = message + "\n\n__Example__:\n" + json.example;
+								}
+						    bot.sendMessage(msg.channel,message);
+							} else {
+								bot.sendMessage(msg.channel,"No matches found");
+							}
+					});
+			}
+	},
+	"leet": {
+		usage: "<message>",
+		description: "converts boring regular text to 1337",
+		process: function(bot,msg,suffix){
+				bot.sendMessage(msg.channel,leet.convert(suffix));
+		}
+	},
     "watchtogether": {
         usage: "[video url (Youtube, Vimeo)",
         description: "Generate a watch2gether room with your video to watch with your little friends!",
@@ -739,10 +776,8 @@ bot.on('ready', function () {
 });
 
 bot.on('disconnected', function () {
-
   console.log('Disconnected!');
   process.exit(1); //exit node.js with an error
-
 });
 
 bot.on('message', function (msg) {
@@ -905,12 +940,24 @@ bot.on('message', function (msg) {
 });
 
 
-//This is supposed to message on user sign on, but doessn't work
-bot.on('presence', function(data) {
-  //if(status === "online'){
-  console.log('presence update:',data.user+" went "+data.status);
-  bot.sendMessage(data.server,data.user+" went "+data.status);
-  //}
+//Log user status changes
+bot.on("presence", function(user,status,gameId) {
+	//if(status === "online"){
+	//console.log("presence update");
+	console.log(user+" went "+status);
+	//}
+	try{
+	if(status != 'offline'){
+		if(messagebox.hasOwnProperty(user.id)){
+			console.log("found message for " + user.id);
+			var message = messagebox[user.id];
+			var channel = bot.channels.get("id",message.channel);
+			delete messagebox[user.id];
+			updateMessagebox();
+			bot.sendMessage(channel,message.content);
+		}
+	}
+	}catch(e){}
 });
 
 function get_gif(tags, func) {
