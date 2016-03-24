@@ -17,10 +17,10 @@ app.get('/', function(request, response) {
 });
 
 //Lets Keep the App alive; prevent sleeping
-var http = require('http');
-setInterval(function() {
-  http.get('http://lowbot-discord.herokuapp.com/');
-}, 1200000); //every 20 minutes
+// var http = require('http');
+// setInterval(function() {
+//   http.get('http://lowbot-discord.herokuapp.com/');
+// }, 1200000); //every 20 minutes
 
 try {
   var Discord = require('discord.js');
@@ -624,7 +624,7 @@ var commands = {
     }
   },
   "game": {
-    usage: "!game <name/acronym of game>",
+    usage: "<name/acronym of game>",
     description: "will send out an invite to `@everyone` in channel to play game",
     process: function(bot,msg,suffix){
       // ask if anyone wants to play the game
