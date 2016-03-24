@@ -1,6 +1,8 @@
 # DiscordBot
 This is a forked version of [Chalda's DiscordBot](https://github.com/chalda/DiscordBot). They had a good starting point and I am just adding/tweaking to my needs.
 
+To see the latest updates, head down to the [Changelog](#Changelog)
+
 # Features:
 - !gif query => returns a gif example !gif cute cats doing stuff
 - !image query => returns an image from Google Images (careful, no adult filter)
@@ -72,9 +74,10 @@ issues with this, you can try deleting your node_modules folder and then running
 # ToDo:
 * Automatic posting of new items posted to a watched RSS feed
 * Automatic posting when a watched streamer goes live
+* Automatic posting when a watched twitter user tweets
 * Have it play music in a specified channel
 * Perhaps some compiling and basic JS testing?
-* Add `!define` feature
+* [Challonge](http://api.challonge.com/v1) Support?
 * Hmm, what else?...
 
 # Changelog
