@@ -853,7 +853,9 @@ bot.on('message', function (msg) {
     } else {
       if(Config.respondToInvalid){
         bot.sendMessage(msg.channel, "Invalid command `" + cmdTxt+"`");
-      }
+      }else{
+            commandNotRecognized(msg);
+        }
     }
   }
 });
