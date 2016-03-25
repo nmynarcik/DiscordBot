@@ -846,6 +846,8 @@ bot.on('message', function (msg) {
       } catch(e){
         if(Config.debug){
           bot.sendMessage(msg.channel, "command " + cmdTxt + " failed :(\n" + e.stack);
+        }else{
+            commandNotRecognized(msg);
         }
       }
     } else {
