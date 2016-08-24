@@ -541,6 +541,7 @@ var commands = {
             }
         }
     },
+<<<<<<< HEAD
   "msg": {
     usage: "<user> <message to leave user>",
     description: "leaves a message for a user the next time they come online",
