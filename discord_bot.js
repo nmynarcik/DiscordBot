@@ -22,14 +22,14 @@ app.get('/', function(request, response) {
 //   http.get('http://lowbot-discord.herokuapp.com/');
 // }, 1200000); //every 20 minutes
 
-try {
-  var Discord = require('discord.js');
-} catch (e) {
-  console.log(e.stack);
-  console.log(process.version);
-  console.log('Please run npm install and ensure it passes with no errors!');
-  process.exit();
-}
+// try {
+  const Discord = require('discord.js');
+// } catch (e) {
+//   console.log(e.stack);
+//   console.log(process.version);
+//   console.log('Please run npm install and ensure it passes with no errors!');
+//   process.exit();
+// }
 
 try {
   var urban = require("urban");
@@ -165,6 +165,13 @@ var aliases;
 var messagebox;
 
 var commands = {
+  "map": {
+    usage: "",
+    description: "gives you the url to the DF Info Map",
+    process: function(bot, msg, suffix) {
+      bot.sendMessage(msg.channel, "http://www.darkfall-info.com");
+    }
+  },
   "gif": {
     usage: "<image tags>",
         description: "returns a random gif matching the tags passed",
@@ -541,7 +548,6 @@ var commands = {
             }
         }
     },
-<<<<<<< HEAD
   "msg": {
     usage: "<user> <message to leave user>",
     description: "leaves a message for a user the next time they come online",
@@ -928,4 +934,14 @@ exports.commandCount = function(){
     return Object.keys(commands).length;
 };
 
-bot.login(AuthDetails.email, AuthDetails.password);
+bot.loginWithToken('MjE3ODgyMDExMjI5MDkzODg4.Cp7Hnw.E3lTAOZuooKzshj8to3wJ1FMGfk', output);
+//bot.login(AuthDetails.email, AuthDetails.password);
+
+function output(error, token) {
+  if(error){
+    console.log('There was an error logging in: ' + error);
+    return;
+  }else{
+    console.log('Logged in. Token: ' + token);
+  }
+}

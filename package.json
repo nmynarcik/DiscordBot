@@ -12,28 +12,28 @@
   "license": "GNU",
   "dependencies": {
     "d20": "^1.4.0",
-    "discord.js": "<=5.2.x",
+    "discord.js": "^8.1.0",
     "express": "^4.13.4",
+    "feedparser": "1.1.x",
+    "google": "1.1.x",
+    "google-images": "0.1.x",
     "google-translate": "^1.0.6",
-    "querystring": "0.2.x"
-    , "underscore": "1.8.x"
-    , "winston": "1.0.x"
-    , "sinon": "1.14.x"
-    , "nock": "1.7.x"
-    , "wolfram": "0.3.x"
-    , "tumblr.js": "0.0.x"
-    , "youtube-node": "1.2.x"
-    , "google": "1.1.x"
-    , "google-images": "0.1.x"
-    , "imgflipper": "1.0.x"
-    , "wikijs": "0.1.x"
-    , "yahoo-finance": "0.2.x"
-    , "feedparser": "1.1.x"
-    , "leet": "^1.2.7"
-    , "urban": "^0.3.0"
-    , "html-to-text": "1.5.x"
-    , "newrelic": "^1.25.5"
-	, "npm":""
+    "html-to-text": "1.5.x",
+    "imgflipper": "1.0.x",
+    "leet": "^1.2.7",
+    "newrelic": "^1.25.5",
+    "nock": "1.7.x",
+    "npm": "",
+    "querystring": "0.2.x",
+    "sinon": "1.14.x",
+    "tumblr.js": "0.0.x",
+    "underscore": "1.8.x",
+    "urban": "^0.3.0",
+    "wikijs": "0.1.x",
+    "winston": "1.0.x",
+    "wolfram": "0.3.x",
+    "yahoo-finance": "0.2.x",
+    "youtube-node": "1.2.x"
   },
   "main": "discord_bot.js"
 }
