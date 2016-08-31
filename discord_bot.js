@@ -16,20 +16,7 @@ app.get('/', function(request, response) {
   console.log('App is running, server is listening on port ', app.get('port'));
 });
 
-//Lets Keep the App alive; prevent sleeping
-// var http = require('http');
-// setInterval(function() {
-//   http.get('http://lowbot-discord.herokuapp.com/');
-// }, 1200000); //every 20 minutes
-
-// try {
-  const Discord = require('discord.js');
-// } catch (e) {
-//   console.log(e.stack);
-//   console.log(process.version);
-//   console.log('Please run npm install and ensure it passes with no errors!');
-//   process.exit();
-// }
+const Discord = require('discord.js');
 
 try {
   var urban = require("urban");
@@ -721,6 +708,13 @@ var commands = {
         }
         google_translate.respond(suffix,msg.channel,bot);
        }
+    },
+    "wang": {
+      usage: "",
+      description: "throws down the link to wangs' eyes",
+      process: function(bot,msg,suffix){
+        bot.sendMessage(msg.channel,'http://mynarcik.com/picture_library/wang.gif');
+       }
     }
 };
 try{
@@ -798,7 +792,7 @@ function commandNotRecognized(msg){
 var bot = new Discord.Client();
 
 bot.on('ready', function () {
-    loadFeeds();
+  loadFeeds();
   console.log('Ready to begin! Serving in ' + bot.channels.length + ' channels');
   require('./plugins.js').init();
 });
@@ -935,7 +929,6 @@ exports.commandCount = function(){
 };
 
 bot.loginWithToken('MjE3ODgyMDExMjI5MDkzODg4.Cp7Hnw.E3lTAOZuooKzshj8to3wJ1FMGfk', output);
-//bot.login(AuthDetails.email, AuthDetails.password);
 
 function output(error, token) {
   if(error){
