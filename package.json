@@ -9,6 +9,9 @@
     "type": "git",
     "url": "git+https://github.com/chalda/DiscordBot.git"
   },
+  "scripts": {
+    "start": "node discord_bot.js"
+  },
   "license": "GNU",
   "dependencies": {
     "d20": "^1.4.0",
