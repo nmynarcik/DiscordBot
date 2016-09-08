@@ -63,7 +63,8 @@ try {
     "imgflip_username": process.env.IMGFLIP_USERNAME,
     "imgflip_password": process.env.IMGFLIP_PASSWORD,
     "wolfram_api_key": process.env.WOLFRAM_API_KEY,
-    "google_translate": process.env.GOOGLE_TRANSLATE
+    "google_translate": process.env.GOOGLE_TRANSLATE,
+    "discord_token": process.env.DISCORD_TOKEN
   }
 } catch (e) {
   //console.log('Please create an auth.json like auth.json.example with at least an email and password.\n' + e.stack);
@@ -929,7 +930,7 @@ exports.commandCount = function(){
     return Object.keys(commands).length;
 };
 
-bot.loginWithToken('MjE3ODgyMDExMjI5MDkzODg4.Cp7Hnw.E3lTAOZuooKzshj8to3wJ1FMGfk', output);
+bot.loginWithToken(AuthDetails.discord_token, output);
 
 function output(error, token) {
   if(error){
