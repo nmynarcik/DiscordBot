@@ -56,8 +56,6 @@ try {
   // Should only work locally now
   console.log('Loading Config Variables from Environment');
   var AuthDetails = {
-    "email" : process.env.EMAIL,
-    "password" : process.env.PASSWORD,
     "youtube_api_key": process.env.YOUTUBE_API_KEY,
     "google_custom_search": process.env.GOOGLE_CUSTOM_SEARCH,
     "imgflip_username": process.env.IMGFLIP_USERNAME,
@@ -66,8 +64,11 @@ try {
     "google_translate": process.env.GOOGLE_TRANSLATE,
     "discord_token": process.env.DISCORD_TOKEN
   }
+  if(AuthDetails.discord_token === undefined){
+    throw "my exception";
+  }
 } catch (e) {
-  //console.log('Please create an auth.json like auth.json.example with at least an email and password.\n' + e.stack);
+  // console.log('Please create an auth.json like auth.json.example with at least an email and password.\n' + e.stack);
   // process.exit();
   console.log('Loading Config from auth.json');
   var AuthDetails = require('./auth.json');
@@ -78,7 +79,7 @@ var Permissions = {};
 try {
   Permissions = require('./permissions.json');
 } catch (e) {
-  // die
+  console.log('No Permissions');
 }
 
 Permissions.checkPermission = function(user, permission) {
