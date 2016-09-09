@@ -12,10 +12,10 @@
   "scripts": {
     "start": "node discord_bot.js"
   },
-  "license": "GNU",
+  "license": "",
   "dependencies": {
     "d20": "^1.4.0",
-    "discord.js": "8.1.0",
+    "discord.js": "hydrabolt/discord.js#indev-old",
     "express": "^4.13.4",
     "feedparser": "1.1.x",
     "google": "1.1.x",
