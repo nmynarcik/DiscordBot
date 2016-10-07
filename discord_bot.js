@@ -592,8 +592,6 @@ var commands = {
       }else{
         if(request[1] === 'add'){
           bot.sendMessage(msg.channel,'Coming Soon: Ability to add '+request[2]+' stream to the watch list');
-        }else{
-          commandNotRecognized(msg);
         }
     }
    }
@@ -850,16 +848,12 @@ bot.on('message', function (msg) {
       } catch(e){
         if(Config.debug){
           bot.sendMessage(msg.channel, "command " + cmdTxt + " failed :(\n" + e.stack);
-        }else{
-            commandNotRecognized(msg);
         }
       }
     } else {
       if(Config.respondToInvalid){
         bot.sendMessage(msg.channel, "Invalid command `" + cmdTxt+"`");
-      }else{
-            commandNotRecognized(msg);
-        }
+      }
     }
   }
 });
