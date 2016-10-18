@@ -570,18 +570,15 @@ var commands = {
         return;
       }else if(request.length == 2){
         // probably need to extract this to its own function
-        require('request')('https://api.twitch.tv/kraken/streams/'+suffix,
+        require('request')('https://api.twitch.tv/kraken/channels/'+suffix,
           function(err,res,body){
             var stream = JSON.parse(body);
-            if(stream.stream){
-              var streamInfo = suffix
+            if(stream.name){
+              var streamInfo = stream.display_name
                                 +" is online, playing "
-                                +stream.stream.game
-                                +" with `"+stream.stream.viewers
-                                +"` viewers"
-                                +"\n"+stream.stream.channel.status
-                                +"\n"+stream.stream.preview.large
-                                +"\n"+stream.stream.channel.url;
+                                + '`' + stream.game + '`'
+                                +"\n"+stream.status
+                                +"\n"+stream.url;
               // console.log(streamInfo);
               bot.sendMessage(msg.channel, streamInfo);
               // bot.sendMessage(msg.channel, stream.stream.channel.url);
