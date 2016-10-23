@@ -62,7 +62,8 @@ try {
     "imgflip_password": process.env.IMGFLIP_PASSWORD,
     "wolfram_api_key": process.env.WOLFRAM_API_KEY,
     "google_translate": process.env.GOOGLE_TRANSLATE,
-    "discord_token": process.env.DISCORD_TOKEN
+    "discord_token": process.env.DISCORD_TOKEN,
+    "twitch_client_id": process.env.TWITCH_CLIENT_ID
   }
   if(AuthDetails.discord_token === undefined){
     throw "my exception";
@@ -570,18 +571,30 @@ var commands = {
         return;
       }else if(request.length == 2){
         // probably need to extract this to its own function
-        require('request')('https://api.twitch.tv/kraken/channels/'+suffix,
+        const twitchApi = 'https://api.twitch.tv/kraken/streams/';
+        const channel = suffix;
+
+        const options = {
+          url: twitchApi + channel,
+          headers: {
+            'Client-ID': AuthDetails.twitch_client_id
+          }
+        };
+
+        require('request')(
+          options,
           function(err,res,body){
             var stream = JSON.parse(body);
-            if(stream.name){
-              var streamInfo = stream.display_name
+            stream = stream.stream;
+            if(stream){
+              var streamInfo = stream.channel.display_name
                                 +" is online, playing "
-                                + '`' + stream.game + '`'
-                                +"\n"+stream.status
-                                +"\n"+stream.url;
-              // console.log(streamInfo);
+                                +" with `"+stream.viewers
+                                +"` viewers"
+                                +"\n"+stream.channel.status
+                                +"\n"+stream.preview.medium;
+                                // +"\n"+stream.channel.url;
               bot.sendMessage(msg.channel, streamInfo);
-              // bot.sendMessage(msg.channel, stream.stream.channel.url);
             }else{
               bot.sendMessage(msg.channel, suffix+' is offline');
             }
