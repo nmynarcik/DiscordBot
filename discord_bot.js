@@ -589,11 +589,12 @@ var commands = {
             if(stream){
               var streamInfo = stream.channel.display_name
                                 +" is online, playing "
+                                +" " + stream.game
                                 +" with `"+stream.viewers
                                 +"` viewers"
                                 +"\n"+stream.channel.status
-                                +"\n"+stream.preview.medium;
-                                // +"\n"+stream.channel.url;
+                                // +"\n"+stream.preview.medium;
+                                +"\n"+stream.channel.url;
               bot.sendMessage(msg.channel, streamInfo);
             }else{
               bot.sendMessage(msg.channel, suffix+' is offline');
